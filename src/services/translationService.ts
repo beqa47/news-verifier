@@ -51,6 +51,11 @@ export const translations = {
     netgazeti: 'Netgazeti',
     formulatv: 'Formula TV',
     
+    // Links & Sources
+    readOriginal: 'Read Original →',
+    viewOnSource: 'View on Source',
+    sourceLink: 'Source Link',
+    
     // Additional UI Elements
     home: 'Home',
     search: 'Search',
@@ -66,6 +71,7 @@ export const translations = {
     confirm: 'Confirm',
     yes: 'Yes',
     no: 'No',
+    openInNewTab: 'Open in new tab',
   },
   ka: {
     // Header & Navigation
@@ -118,6 +124,11 @@ export const translations = {
     netgazeti: 'ნეტგაზეთი',
     formulatv: 'ფორმულა',
     
+    // Links & Sources
+    readOriginal: 'ორიგინალის წაკითხვა →',
+    viewOnSource: 'წყაროზე ხედვა',
+    sourceLink: 'წყაროს ბმული',
+    
     // Additional UI Elements
     home: 'მთავარი',
     search: 'ძებნა',
@@ -133,6 +144,7 @@ export const translations = {
     confirm: 'დადასტურება',
     yes: 'დიახ',
     no: 'არა',
+    openInNewTab: 'ახალ ჩანართში გახსნა',
   },
 };
 

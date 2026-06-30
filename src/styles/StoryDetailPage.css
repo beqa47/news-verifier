@@ -33,11 +33,21 @@
   margin-bottom: 1rem;
 }
 
+.story-title,
 .story-header h1 {
   font-size: 2rem;
   margin-bottom: 1rem;
   color: var(--foreground);
   line-height: 1.3;
+}
+
+.story-hero-image {
+  width: 100%;
+  height: auto;
+  border-radius: 0.75rem;
+  margin-bottom: 1.5rem;
+  object-fit: cover;
+  max-height: 400px;
 }
 
 .story-header .summary {
@@ -54,14 +64,65 @@
   padding-top: 1rem;
   border-top: 1px solid var(--border);
   font-size: 0.85rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
-.story-meta .source {
+.story-meta .source-label {
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+}
+
+.story-meta .source-name {
   font-weight: 600;
 }
 
 .story-meta .date {
   color: var(--muted);
+}
+
+.original-link {
+  display: inline-block;
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.5rem 1rem;
+  background-color: rgba(10, 126, 164, 0.1);
+  border-radius: 0.25rem;
+  transition: all 0.2s;
+  margin-left: auto;
+}
+
+.original-link:hover {
+  background-color: var(--primary);
+  color: white;
+}
+
+.confidence-section {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.confidence-bar {
+  width: 100%;
+  height: 8px;
+  background-color: var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.confidence-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.confidence-label {
+  font-size: 0.9rem;
+  font-weight: 600;
 }
 
 .tabs {
@@ -71,7 +132,7 @@
   margin-bottom: 2rem;
 }
 
-.tab {
+.tab-button {
   background: none;
   border: none;
   color: var(--muted);
@@ -83,16 +144,16 @@
   transition: all 0.2s;
 }
 
-.tab:hover {
+.tab-button:hover {
   color: var(--primary);
 }
 
-.tab.active {
+.tab-button.active {
   color: var(--primary);
   border-bottom-color: var(--primary);
 }
 
-.content {
+.tab-content {
   width: 100%;
 }
 
@@ -102,69 +163,65 @@
   gap: 2rem;
 }
 
-.primary-perspective {
-  margin-bottom: 1rem;
-}
-
-.opposing-perspectives {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.opposing-perspectives h3 {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--foreground);
-  margin-bottom: 1rem;
-}
-
-.perspective {
-  border: 1px solid var(--border);
+.perspective-card {
+  background-color: var(--surface);
+  border: 2px solid var(--border);
   border-radius: 0.75rem;
   padding: 1.5rem;
-  background-color: var(--surface);
-  border-left: 4px solid;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
 }
 
-.perspective h3,
-.perspective h4 {
+.perspective-card h3 {
   font-size: 1.1rem;
   margin-bottom: 0.5rem;
   color: var(--foreground);
 }
 
-.perspective h4 {
-  font-size: 1rem;
-}
-
-.perspective .source {
+.perspective-card .source-name {
   font-size: 0.85rem;
   color: var(--muted);
   margin-bottom: 1rem;
   font-weight: 600;
 }
 
-.perspective .content {
+.perspective-card .summary {
   font-size: 0.95rem;
   color: var(--foreground);
   line-height: 1.6;
   margin-bottom: 1rem;
+  flex-grow: 1;
 }
 
-.perspective .full-content {
-  font-size: 0.9rem;
-  color: var(--foreground);
-  line-height: 1.6;
-}
-
-.no-opposing {
-  background-color: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 0.75rem;
-  padding: 2rem;
+.perspective-card.empty {
   text-align: center;
   color: var(--muted);
+  min-height: 200px;
+  justify-content: center;
+}
+
+.source-button {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  background-color: var(--primary);
+  color: white;
+  text-decoration: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  text-align: center;
+  width: fit-content;
+  border: none;
+  cursor: pointer;
+}
+
+.source-button:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(10, 126, 164, 0.3);
 }
 
 .analysis-view {
@@ -173,53 +230,32 @@
   gap: 1.5rem;
 }
 
-.analysis-card {
+.analysis-section {
   border: 1px solid var(--border);
   border-radius: 0.75rem;
   padding: 1.5rem;
   background-color: var(--surface);
 }
 
-.analysis-card h3 {
+.analysis-section h3 {
   font-size: 1.1rem;
   margin-bottom: 1rem;
   color: var(--foreground);
 }
 
-.bias-info {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.bias-info p {
+.analysis-section p {
   font-size: 0.95rem;
   color: var(--foreground);
   line-height: 1.6;
+  margin-bottom: 1rem;
 }
 
-.source-details {
-  background-color: var(--background);
-  padding: 1rem;
-  border-radius: 0.5rem;
-  border-left: 3px solid var(--primary);
-}
-
-.source-details p {
-  font-size: 0.9rem;
-  margin: 0.5rem 0;
-}
-
-.source-details strong {
-  color: var(--primary);
-}
-
-.analysis-card ul {
+.analysis-section ul {
   list-style: none;
   padding: 0;
 }
 
-.analysis-card li {
+.analysis-section li {
   font-size: 0.95rem;
   color: var(--foreground);
   margin-bottom: 0.75rem;
@@ -228,7 +264,7 @@
   line-height: 1.5;
 }
 
-.analysis-card li:before {
+.analysis-section li:before {
   content: "✓";
   position: absolute;
   left: 0;
@@ -237,6 +273,7 @@
 }
 
 @media (max-width: 768px) {
+  .story-title,
   .story-header h1 {
     font-size: 1.5rem;
   }
@@ -247,6 +284,12 @@
     align-items: flex-start;
   }
 
+  .original-link {
+    margin-left: 0;
+    width: 100%;
+    text-align: center;
+  }
+
   .comparison-view {
     gap: 1rem;
   }
@@ -255,16 +298,24 @@
     gap: 0;
   }
 
-  .tab {
+  .tab-button {
     flex: 1;
     text-align: center;
   }
 
-  .perspective {
+  .perspective-card {
     padding: 1rem;
   }
 
-  .analysis-card {
+  .source-button {
+    width: 100%;
+  }
+
+  .analysis-section {
     padding: 1rem;
+  }
+
+  .confidence-section {
+    margin-top: 0.75rem;
   }
 }

@@ -46,6 +46,7 @@ export interface NewsArticle {
   contentKa?: string; // Georgian content
   source: string;
   sourceUrl: string;
+  originalUrl?: string; // Link to original news article
   category: 'establishment' | 'opposition';
   publishedAt: string;
   imageUrl?: string;
@@ -70,6 +71,7 @@ const MOCK_NEWS_DATA: NewsArticle[] = [
     topic: 'Economy',
     topicKa: 'ეკონომიკა',
     imageUrl: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=500&h=300&fit=crop',
+    originalUrl: 'https://www.imedi.ge/ge/news/economy/government-economic-program',
     confidenceScore: 72,
     trending: true,
   },
@@ -81,6 +83,7 @@ const MOCK_NEWS_DATA: NewsArticle[] = [
     summaryKa: 'ოპოზიციის პარტიები ამტკიცებენ, რომ ახალი ეკონომიკური პროგრამა მოკლებულია გამჭვირვალობას და არ პასუხობს მცირე ბიზნესის და ჩვეულებრივი მოქალაქეების საჭიროებებს.',
     source: 'Mtavari TV',
     sourceUrl: 'https://mtavari.tv',
+    originalUrl: 'https://mtavari.tv/ge/news/opposition-criticizes-economic-program',
     category: 'opposition',
     publishedAt: new Date().toISOString(),
     topic: 'Economy',
@@ -102,6 +105,7 @@ const MOCK_NEWS_DATA: NewsArticle[] = [
     topic: 'Healthcare',
     topicKa: 'ჯანდაცვა',
     imageUrl: 'https://images.unsplash.com/photo-1576091160550-112173f7f869?w=500&h=300&fit=crop',
+    originalUrl: 'https://1tv.ge/ge/news/healthcare-modernization-begins',
     confidenceScore: 75,
     trending: true,
   },
@@ -113,6 +117,7 @@ const MOCK_NEWS_DATA: NewsArticle[] = [
     summaryKa: 'ჯანდაცვის ადვოკატები გაფრთხილებენ, რომ მოდერნიზაციის პროგრამა შეიძლება უგულებელი ტოვოს სოფლის რეგიონებს და გაზარდოს პაციენტების ხარჯები.',
     source: 'Netgazeti',
     sourceUrl: 'https://netgazeti.ge',
+    originalUrl: 'https://netgazeti.ge/ge/news/healthcare-rural-concerns',
     category: 'opposition',
     publishedAt: new Date(Date.now() - 86400000).toISOString(),
     topic: 'Healthcare',
@@ -134,6 +139,7 @@ const MOCK_NEWS_DATA: NewsArticle[] = [
     topic: 'Education',
     topicKa: 'განათლება',
     imageUrl: 'https://images.unsplash.com/photo-1427504494785-cdae8dfb7d5b?w=500&h=300&fit=crop',
+    originalUrl: 'https://www.imedi.ge/ge/news/education/new-curriculum-initiative',
     confidenceScore: 73,
   },
   {
@@ -144,6 +150,7 @@ const MOCK_NEWS_DATA: NewsArticle[] = [
     summaryKa: 'მასწავლებლები და განათლების ექსპერტები გამოთქვამენ შეშფოთებას სასწავლო გეგმის ცვლილებების სწრაფი დანერგვის შესახებ ადეკვატური подготовки გარეშე.',
     source: 'Formula TV',
     sourceUrl: 'https://formula.ge',
+    originalUrl: 'https://formula.ge/ge/news/educators-question-curriculum',
     category: 'opposition',
     publishedAt: new Date(Date.now() - 172800000).toISOString(),
     topic: 'Education',
@@ -164,6 +171,7 @@ const MOCK_NEWS_DATA: NewsArticle[] = [
     topic: 'Infrastructure',
     topicKa: 'ინფრასტრუქტურა',
     imageUrl: 'https://images.unsplash.com/photo-1581092916056-0c4c3acd3789?w=500&h=300&fit=crop',
+    originalUrl: 'https://1tv.ge/ge/news/infrastructure-development-accelerates',
     confidenceScore: 74,
     trending: true,
   },
@@ -175,6 +183,7 @@ const MOCK_NEWS_DATA: NewsArticle[] = [
     summaryKa: 'ანგარიშები მიუთითებენ დაგვიანებებსა და ბიუჯეტის გადაჭარბებებზე ქვეყნის რამდენიმე მსხვილ ინფრასტრუქტურის პროექტში.',
     source: 'Mtavari TV',
     sourceUrl: 'https://mtavari.tv',
+    originalUrl: 'https://mtavari.tv/ge/news/infrastructure-challenges',
     category: 'opposition',
     publishedAt: new Date(Date.now() - 259200000).toISOString(),
     topic: 'Infrastructure',

@@ -116,6 +116,11 @@ export default function StoryDetailPage({ storyId, onBack }: StoryDetailPageProp
           <span className="source-label">{getSourceLabel(story.category)}</span>
           <span className="source-name">{story.source}</span>
           <span className="date">{formatDate(story.publishedAt)}</span>
+          {story.originalUrl && (
+            <a href={story.originalUrl} target="_blank" rel="noopener noreferrer" className="original-link">
+              {t('readOriginal' as any)}
+            </a>
+          )}
         </div>
 
         <h1 className="story-title">{getHeadline(story)}</h1>
@@ -160,6 +165,11 @@ export default function StoryDetailPage({ storyId, onBack }: StoryDetailPageProp
               <h3>{getSourceLabel(story.category)}</h3>
               <p className="source-name">{story.source}</p>
               <p className="summary">{getSummary(story)}</p>
+              {story.originalUrl && (
+                <a href={story.originalUrl} target="_blank" rel="noopener noreferrer" className="source-button">
+                  {t('viewOnSource' as any)} →
+                </a>
+              )}
             </div>
 
             {relatedStories.length > 0 ? (
@@ -167,6 +177,11 @@ export default function StoryDetailPage({ storyId, onBack }: StoryDetailPageProp
                 <h3>{getSourceLabel(relatedStories[0].category)}</h3>
                 <p className="source-name">{relatedStories[0].source}</p>
                 <p className="summary">{getSummary(relatedStories[0])}</p>
+                {relatedStories[0].originalUrl && (
+                  <a href={relatedStories[0].originalUrl} target="_blank" rel="noopener noreferrer" className="source-button">
+                    {t('viewOnSource' as any)} →
+                  </a>
+                )}
               </div>
             ) : (
               <div className="perspective-card opposite empty">
