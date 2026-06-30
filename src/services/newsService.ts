@@ -39,14 +39,18 @@ const GEORGIAN_NEWS_SOURCES = {
 export interface NewsArticle {
   id: string;
   headline: string;
+  headlineKa: string; // Georgian headline
   summary: string;
+  summaryKa: string; // Georgian summary
   content?: string;
+  contentKa?: string; // Georgian content
   source: string;
   sourceUrl: string;
   category: 'establishment' | 'opposition';
   publishedAt: string;
   imageUrl?: string;
   topic: string;
+  topicKa: string; // Georgian topic
   confidenceScore?: number; // 0-100 percentage
   trending?: boolean;
 }
@@ -56,12 +60,15 @@ const MOCK_NEWS_DATA: NewsArticle[] = [
   {
     id: '1',
     headline: 'Government announces new economic development program',
+    headlineKa: 'მთავრობა ახალი ეკონომიკური განვითარების პროგრამას აცხადებს',
     summary: 'The government has unveiled a comprehensive economic development initiative aimed at attracting foreign investment and creating jobs.',
+    summaryKa: 'მთავრობამ წარმოადგინა ყოვლისმომცველი ეკონომიკური განვითარების ინიციატივა, რომელიც მიზნად ისახავს უცხო ინვესტიციების привлечение და სამუშაო ადგილების შექმნას.',
     source: 'Imedi TV',
     sourceUrl: 'https://www.imedi.ge',
     category: 'establishment',
     publishedAt: new Date().toISOString(),
     topic: 'Economy',
+    topicKa: 'ეკონომიკა',
     imageUrl: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=500&h=300&fit=crop',
     confidenceScore: 72,
     trending: true,
@@ -69,12 +76,15 @@ const MOCK_NEWS_DATA: NewsArticle[] = [
   {
     id: '2',
     headline: 'Opposition criticizes economic program as insufficient',
+    headlineKa: 'ოპოზიცია ეკონომიკურ პროგრამას არასაკმარისად აფასებს',
     summary: 'Opposition parties argue the new economic program lacks transparency and fails to address the needs of small businesses and ordinary citizens.',
+    summaryKa: 'ოპოზიციის პარტიები ამტკიცებენ, რომ ახალი ეკონომიკური პროგრამა მოკლებულია გამჭვირვალობას და არ პასუხობს მცირე ბიზნესის და ჩვეულებრივი მოქალაქეების საჭიროებებს.',
     source: 'Mtavari TV',
     sourceUrl: 'https://mtavari.tv',
     category: 'opposition',
     publishedAt: new Date().toISOString(),
     topic: 'Economy',
+    topicKa: 'ეკონომიკა',
     imageUrl: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=500&h=300&fit=crop',
     confidenceScore: 68,
     trending: true,
@@ -82,12 +92,15 @@ const MOCK_NEWS_DATA: NewsArticle[] = [
   {
     id: '3',
     headline: 'Healthcare system modernization begins',
+    headlineKa: 'ჯანდაცვის სისტემის მოდერნიზაცია იწყება',
     summary: 'The government launches a major healthcare infrastructure modernization project with investment from international partners.',
+    summaryKa: 'მთავრობა ხელმძღვანელობს ჯანდაცვის ინფრასტრუქტურის მოდერნიზაციის დიდ პროექტს საერთაშორისო პარტნიორების ინვესტიციებით.',
     source: 'Georgian Public Broadcaster',
     sourceUrl: 'https://1tv.ge',
     category: 'establishment',
     publishedAt: new Date(Date.now() - 86400000).toISOString(),
     topic: 'Healthcare',
+    topicKa: 'ჯანდაცვა',
     imageUrl: 'https://images.unsplash.com/photo-1576091160550-112173f7f869?w=500&h=300&fit=crop',
     confidenceScore: 75,
     trending: true,
@@ -95,12 +108,15 @@ const MOCK_NEWS_DATA: NewsArticle[] = [
   {
     id: '4',
     headline: 'Healthcare reforms raise concerns about rural areas',
+    headlineKa: 'ჯანდაცვის რეფორმები სოფლის მხარეში შეშფოთებას იწვევს',
     summary: 'Healthcare advocates warn that the modernization program may neglect rural regions and increase costs for patients.',
+    summaryKa: 'ჯანდაცვის ადვოკატები გაფრთხილებენ, რომ მოდერნიზაციის პროგრამა შეიძლება უგულებელი ტოვოს სოფლის რეგიონებს და გაზარდოს პაციენტების ხარჯები.',
     source: 'Netgazeti',
     sourceUrl: 'https://netgazeti.ge',
     category: 'opposition',
     publishedAt: new Date(Date.now() - 86400000).toISOString(),
     topic: 'Healthcare',
+    topicKa: 'ჯანდაცვა',
     imageUrl: 'https://images.unsplash.com/photo-1631217314831-c6227db76b6e?w=500&h=300&fit=crop',
     confidenceScore: 70,
     trending: true,
@@ -108,49 +124,61 @@ const MOCK_NEWS_DATA: NewsArticle[] = [
   {
     id: '5',
     headline: 'Education ministry launches new curriculum initiative',
+    headlineKa: 'განათლების სამინისტრო ახალი სასწავლო გეგმის ინიციატივას ხელმძღვანელობს',
     summary: 'The education ministry introduces a new national curriculum aligned with international standards to prepare students for modern economy.',
+    summaryKa: 'განათლების სამინისტრო წარმოადგენს ახალ ეროვნულ სასწავლო გეგმას, რომელიც შეესაბამება საერთაშორისო სტანდარტებს და მოამზადებს მოსწავლეებს თანამედროვე ეკონომიკისთვის.',
     source: 'Imedi TV',
     sourceUrl: 'https://www.imedi.ge',
     category: 'establishment',
     publishedAt: new Date(Date.now() - 172800000).toISOString(),
     topic: 'Education',
+    topicKa: 'განათლება',
     imageUrl: 'https://images.unsplash.com/photo-1427504494785-cdae8dfb7d5b?w=500&h=300&fit=crop',
     confidenceScore: 73,
   },
   {
     id: '6',
     headline: 'Educators question new curriculum changes',
+    headlineKa: 'პედაგოგები ახალი სასწავლო გეგმის ცვლილებებს კითხვის ნიშნის ქვეშ აყენებენ',
     summary: 'Teachers and education experts express concerns about the rapid implementation of curriculum changes without adequate preparation.',
+    summaryKa: 'მასწავლებლები და განათლების ექსპერტები გამოთქვამენ შეშფოთებას სასწავლო გეგმის ცვლილებების სწრაფი დანერგვის შესახებ ადეკვატური подготовки გარეშე.',
     source: 'Formula TV',
     sourceUrl: 'https://formula.ge',
     category: 'opposition',
     publishedAt: new Date(Date.now() - 172800000).toISOString(),
     topic: 'Education',
+    topicKa: 'განათლება',
     imageUrl: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=500&h=300&fit=crop',
     confidenceScore: 69,
   },
   {
     id: '7',
     headline: 'Infrastructure development accelerates',
+    headlineKa: 'ინფრასტრუქტურის განვითარება აჩქარდება',
     summary: 'Major infrastructure projects across Georgia show progress with government support and international cooperation.',
+    summaryKa: 'საქართველოს მასშტაბით მსხვილი ინფრასტრუქტურის პროექტები აჩვენებენ პროგრესს მთავრობის მხარდამჭერობით და საერთაშორისო თანამშრომლობით.',
     source: 'Georgian Public Broadcaster',
     sourceUrl: 'https://1tv.ge',
     category: 'establishment',
     publishedAt: new Date(Date.now() - 259200000).toISOString(),
     topic: 'Infrastructure',
-    imageUrl: 'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=500&h=300&fit=crop',
+    topicKa: 'ინფრასტრუქტურა',
+    imageUrl: 'https://images.unsplash.com/photo-1581092916056-0c4c3acd3789?w=500&h=300&fit=crop',
     confidenceScore: 74,
     trending: true,
   },
   {
     id: '8',
     headline: 'Infrastructure projects face implementation challenges',
+    headlineKa: 'ინფრასტრუქტურის პროექტები განხორციელების გამოწვევებს აწყდება',
     summary: 'Reports indicate delays and budget overruns in several major infrastructure projects across the country.',
+    summaryKa: 'ანგარიშები მიუთითებენ დაგვიანებებსა და ბიუჯეტის გადაჭარბებებზე ქვეყნის რამდენიმე მსხვილ ინფრასტრუქტურის პროექტში.',
     source: 'Mtavari TV',
     sourceUrl: 'https://mtavari.tv',
     category: 'opposition',
     publishedAt: new Date(Date.now() - 259200000).toISOString(),
     topic: 'Infrastructure',
+    topicKa: 'ინფრასტრუქტურა',
     imageUrl: 'https://images.unsplash.com/photo-1581092916550-e323b3c69dfa?w=500&h=300&fit=crop',
     confidenceScore: 71,
     trending: true,

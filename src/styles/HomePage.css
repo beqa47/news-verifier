@@ -25,6 +25,37 @@
   margin: 0 auto;
 }
 
+.language-selector {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  margin-bottom: 1.5rem;
+}
+
+.lang-btn {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.lang-btn:hover {
+  background-color: var(--primary-light);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.lang-btn.active {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
 .hero-section {
   text-align: center;
   margin-bottom: 2rem;
