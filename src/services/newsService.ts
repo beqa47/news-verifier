@@ -47,6 +47,8 @@ export interface NewsArticle {
   publishedAt: string;
   imageUrl?: string;
   topic: string;
+  confidenceScore?: number; // 0-100 percentage
+  trending?: boolean;
 }
 
 // Mock data for demonstration - in production, this would fetch from real APIs
@@ -60,6 +62,9 @@ const MOCK_NEWS_DATA: NewsArticle[] = [
     category: 'establishment',
     publishedAt: new Date().toISOString(),
     topic: 'Economy',
+    imageUrl: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=500&h=300&fit=crop',
+    confidenceScore: 72,
+    trending: true,
   },
   {
     id: '2',
@@ -70,6 +75,9 @@ const MOCK_NEWS_DATA: NewsArticle[] = [
     category: 'opposition',
     publishedAt: new Date().toISOString(),
     topic: 'Economy',
+    imageUrl: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=500&h=300&fit=crop',
+    confidenceScore: 68,
+    trending: true,
   },
   {
     id: '3',
@@ -80,6 +88,9 @@ const MOCK_NEWS_DATA: NewsArticle[] = [
     category: 'establishment',
     publishedAt: new Date(Date.now() - 86400000).toISOString(),
     topic: 'Healthcare',
+    imageUrl: 'https://images.unsplash.com/photo-1576091160550-112173f7f869?w=500&h=300&fit=crop',
+    confidenceScore: 75,
+    trending: true,
   },
   {
     id: '4',
@@ -90,6 +101,9 @@ const MOCK_NEWS_DATA: NewsArticle[] = [
     category: 'opposition',
     publishedAt: new Date(Date.now() - 86400000).toISOString(),
     topic: 'Healthcare',
+    imageUrl: 'https://images.unsplash.com/photo-1631217314831-c6227db76b6e?w=500&h=300&fit=crop',
+    confidenceScore: 70,
+    trending: true,
   },
   {
     id: '5',
@@ -100,6 +114,8 @@ const MOCK_NEWS_DATA: NewsArticle[] = [
     category: 'establishment',
     publishedAt: new Date(Date.now() - 172800000).toISOString(),
     topic: 'Education',
+    imageUrl: 'https://images.unsplash.com/photo-1427504494785-cdae8dfb7d5b?w=500&h=300&fit=crop',
+    confidenceScore: 73,
   },
   {
     id: '6',
@@ -110,6 +126,8 @@ const MOCK_NEWS_DATA: NewsArticle[] = [
     category: 'opposition',
     publishedAt: new Date(Date.now() - 172800000).toISOString(),
     topic: 'Education',
+    imageUrl: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=500&h=300&fit=crop',
+    confidenceScore: 69,
   },
   {
     id: '7',
@@ -120,6 +138,9 @@ const MOCK_NEWS_DATA: NewsArticle[] = [
     category: 'establishment',
     publishedAt: new Date(Date.now() - 259200000).toISOString(),
     topic: 'Infrastructure',
+    imageUrl: 'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=500&h=300&fit=crop',
+    confidenceScore: 74,
+    trending: true,
   },
   {
     id: '8',
@@ -130,6 +151,9 @@ const MOCK_NEWS_DATA: NewsArticle[] = [
     category: 'opposition',
     publishedAt: new Date(Date.now() - 259200000).toISOString(),
     topic: 'Infrastructure',
+    imageUrl: 'https://images.unsplash.com/photo-1581092916550-e323b3c69dfa?w=500&h=300&fit=crop',
+    confidenceScore: 71,
+    trending: true,
   },
 ];
 
@@ -147,12 +171,25 @@ export class NewsService {
       // In production, you would:
       // 1. Fetch from RSS feeds using a CORS proxy
       // 2. Parse XML/JSON responses
-      // 3. Extract headlines, summaries, and categorize by source
+      // 3. Extract headlines, summaries, images, and categorize by source
+      // 4. Calculate confidence scores based on cross-source verification
       return MOCK_NEWS_DATA;
     } catch (error) {
       console.error('Failed to fetch news:', error);
       return MOCK_NEWS_DATA; // Fallback to mock data
     }
+  }
+
+  /**
+   * Get trending news
+   */
+  static async getTrendingNews(): Promise<NewsArticle[]> {
+    const allNews = await this.fetchNews();
+    return allNews.filter((article) => article.trending).sort((a, b) => {
+      const dateA = new Date(a.publishedAt).getTime();
+      const dateB = new Date(b.publishedAt).getTime();
+      return dateB - dateA;
+    });
   }
 
   /**
@@ -201,5 +238,30 @@ export class NewsService {
    */
   static getSourcesConfig() {
     return GEORGIAN_NEWS_SOURCES;
+  }
+
+  /**
+   * Calculate confidence score based on cross-source verification
+   * Higher score = more sources covering the story, more agreement
+   */
+  static calculateConfidenceScore(article: NewsArticle, allArticles: NewsArticle[]): number {
+    // Find related articles from other sources on the same topic
+    const relatedArticles = allArticles.filter(
+      (a) =>
+        a.topic === article.topic &&
+        a.id !== article.id &&
+        a.category !== article.category // From opposite perspective
+    );
+
+    // Base score
+    let score = 65;
+
+    // Increase score if multiple sources cover the topic
+    if (relatedArticles.length > 0) {
+      score += relatedArticles.length * 5;
+    }
+
+    // Cap at 100
+    return Math.min(score, 100);
   }
 }
