@@ -50,6 +50,22 @@ export const translations = {
     mtavaritv: 'Mtavari TV',
     netgazeti: 'Netgazeti',
     formulatv: 'Formula TV',
+    
+    // Additional UI Elements
+    home: 'Home',
+    search: 'Search',
+    noResults: 'No results found',
+    error: 'Error',
+    tryAgain: 'Try Again',
+    close: 'Close',
+    share: 'Share',
+    save: 'Save',
+    delete: 'Delete',
+    edit: 'Edit',
+    cancel: 'Cancel',
+    confirm: 'Confirm',
+    yes: 'Yes',
+    no: 'No',
   },
   ka: {
     // Header & Navigation
@@ -101,6 +117,22 @@ export const translations = {
     mtavaritv: 'მთავარი',
     netgazeti: 'ნეტგაზეთი',
     formulatv: 'ფორმულა',
+    
+    // Additional UI Elements
+    home: 'მთავარი',
+    search: 'ძებნა',
+    noResults: 'შედეგი არ მოიძებნა',
+    error: 'შეცდომა',
+    tryAgain: 'ხელახლა სცადეთ',
+    close: 'დახურვა',
+    share: 'გაზიარება',
+    save: 'შენახვა',
+    delete: 'წაშლა',
+    edit: 'რედაქტირება',
+    cancel: 'გაუქმება',
+    confirm: 'დადასტურება',
+    yes: 'დიახ',
+    no: 'არა',
   },
 };
 

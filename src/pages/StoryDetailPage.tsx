@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import '../styles/StoryDetailPage.css';
 import { NewsService, type NewsArticle } from '../services/newsService';
+import { TranslationService, type Language } from '../services/translationService';
 
 interface StoryDetailPageProps {
   storyId: string;
@@ -12,9 +13,16 @@ export default function StoryDetailPage({ storyId, onBack }: StoryDetailPageProp
   const [relatedStories, setRelatedStories] = useState<NewsArticle[]>([]);
   const [activeTab, setActiveTab] = useState<'comparison' | 'analysis'>('comparison');
   const [loading, setLoading] = useState(true);
+  const [language, setLanguage] = useState<Language>(() => TranslationService.getLanguage());
 
   useEffect(() => {
     loadStory();
+    // Listen for language changes
+    const handleStorageChange = () => {
+      setLanguage(TranslationService.getLanguage());
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, [storyId]);
 
   const loadStory = async () => {
@@ -42,13 +50,44 @@ export default function StoryDetailPage({ storyId, onBack }: StoryDetailPageProp
     }
   };
 
+  const t = (key: keyof typeof TranslationService) => {
+    return TranslationService.t(key as any);
+  };
+
+  const getHeadline = (s: NewsArticle) => {
+    return language === 'ka' ? s.headlineKa : s.headline;
+  };
+
+  const getSummary = (s: NewsArticle) => {
+    return language === 'ka' ? s.summaryKa : s.summary;
+  };
+
+  const getSourceLabel = (category: string) => {
+    return category === 'establishment' ? t('establishmentView' as any) : t('oppositionView' as any);
+  };
+
+  const getConfidenceColor = (score: number) => {
+    if (score >= 80) return '#27ae60';
+    if (score >= 60) return '#f39c12';
+    return '#e74c3c';
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString(language === 'ka' ? 'ka-GE' : 'en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  };
+
   if (loading) {
     return (
       <div className="story-detail-page">
         <button className="back-button" onClick={onBack}>
-          ← Back
+          {t('back' as any)}
         </button>
-        <div className="loading">Loading story...</div>
+        <div className="loading">{t('loading' as any)}</div>
       </div>
     );
   }
@@ -57,137 +96,138 @@ export default function StoryDetailPage({ storyId, onBack }: StoryDetailPageProp
     return (
       <div className="story-detail-page">
         <button className="back-button" onClick={onBack}>
-          ← Back
+          {t('back' as any)}
         </button>
-        <div className="error">Story not found</div>
+        <div className="error">{t('error' as any)}</div>
       </div>
     );
   }
 
-  const getSourceColor = (category: string) => {
-    return category === 'establishment' ? '#e74c3c' : '#27ae60';
-  };
-
-  const getPerspectiveLabel = (category: string) => {
-    return category === 'establishment' ? 'Establishment View' : 'Opposition View';
-  };
-
   return (
     <div className="story-detail-page">
       <button className="back-button" onClick={onBack}>
-        ← Back
+        {t('back' as any)}
       </button>
 
       <div className="story-header">
-        <span className="topic-badge">{story.topic}</span>
-        <h1>{story.headline}</h1>
-        <p className="summary">{story.summary}</p>
+        {story.imageUrl && <img src={story.imageUrl} alt={getHeadline(story)} className="story-hero-image" />}
+
         <div className="story-meta">
-          <span className="source" style={{ color: getSourceColor(story.category) }}>
-            {getPerspectiveLabel(story.category)} • {story.source}
-          </span>
-          <span className="date">{new Date(story.publishedAt).toLocaleDateString()}</span>
+          <span className="source-label">{getSourceLabel(story.category)}</span>
+          <span className="source-name">{story.source}</span>
+          <span className="date">{formatDate(story.publishedAt)}</span>
         </div>
+
+        <h1 className="story-title">{getHeadline(story)}</h1>
+
+        {story.confidenceScore !== undefined && (
+          <div className="confidence-section">
+            <div className="confidence-bar">
+              <div
+                className="confidence-fill"
+                style={{
+                  width: `${story.confidenceScore}%`,
+                  backgroundColor: getConfidenceColor(story.confidenceScore),
+                }}
+              />
+            </div>
+            <span className="confidence-label" style={{ color: getConfidenceColor(story.confidenceScore) }}>
+              {story.confidenceScore}% {t('confidenceScore' as any)}
+            </span>
+          </div>
+        )}
       </div>
 
       <div className="tabs">
         <button
-          className={`tab ${activeTab === 'comparison' ? 'active' : ''}`}
+          className={`tab-button ${activeTab === 'comparison' ? 'active' : ''}`}
           onClick={() => setActiveTab('comparison')}
         >
-          Perspectives
+          {t('perspectives' as any)}
         </button>
         <button
-          className={`tab ${activeTab === 'analysis' ? 'active' : ''}`}
+          className={`tab-button ${activeTab === 'analysis' ? 'active' : ''}`}
           onClick={() => setActiveTab('analysis')}
         >
-          Analysis
+          {t('analysis' as any)}
         </button>
       </div>
 
-      <div className="content">
-        {activeTab === 'comparison' ? (
+      <div className="tab-content">
+        {activeTab === 'comparison' && (
           <div className="comparison-view">
-            <div className="primary-perspective">
-              <div
-                className={`perspective ${story.category}`}
-                style={{ borderLeftColor: getSourceColor(story.category) }}
-              >
-                <h3>{getPerspectiveLabel(story.category)}</h3>
-                <p className="source">{story.source}</p>
-                <p className="content">{story.summary}</p>
-                {story.content && <p className="full-content">{story.content}</p>}
-              </div>
+            <div className="perspective-card primary">
+              <h3>{getSourceLabel(story.category)}</h3>
+              <p className="source-name">{story.source}</p>
+              <p className="summary">{getSummary(story)}</p>
             </div>
 
-            {relatedStories.length > 0 && (
-              <div className="opposing-perspectives">
-                <h3>Opposing Perspectives</h3>
-                {relatedStories.map((relatedStory) => (
-                  <div
-                    key={relatedStory.id}
-                    className={`perspective ${relatedStory.category}`}
-                    style={{ borderLeftColor: getSourceColor(relatedStory.category) }}
-                  >
-                    <h4>{getPerspectiveLabel(relatedStory.category)}</h4>
-                    <p className="source">{relatedStory.source}</p>
-                    <p className="content">{relatedStory.summary}</p>
-                  </div>
-                ))}
+            {relatedStories.length > 0 ? (
+              <div className="perspective-card opposite">
+                <h3>{getSourceLabel(relatedStories[0].category)}</h3>
+                <p className="source-name">{relatedStories[0].source}</p>
+                <p className="summary">{getSummary(relatedStories[0])}</p>
               </div>
-            )}
-
-            {relatedStories.length === 0 && (
-              <div className="no-opposing">
-                <p>No opposing perspectives available for this topic yet.</p>
+            ) : (
+              <div className="perspective-card opposite empty">
+                <p>{t('noOpposing' as any)}</p>
               </div>
             )}
           </div>
-        ) : (
+        )}
+
+        {activeTab === 'analysis' && (
           <div className="analysis-view">
-            <div className="analysis-card">
-              <h3>Bias Assessment</h3>
-              <div className="bias-info">
-                <p>
-                  This story is from a <strong>{story.category === 'establishment' ? 'pro-government' : 'opposition'}</strong> source.
-                </p>
-                <div className="source-details">
-                  <p>
-                    <strong>Source:</strong> {story.source}
-                  </p>
-                  <p>
-                    <strong>Category:</strong> {story.category === 'establishment' ? 'Establishment-aligned' : 'Opposition-aligned'}
-                  </p>
-                </div>
-              </div>
+            <div className="analysis-section">
+              <h3>{t('biasAssessment' as any)}</h3>
+              <p>
+                {story.category === 'establishment'
+                  ? language === 'ka'
+                    ? 'ეს სტატია ხელისუფლების პერსპექტივიდან გამოქვეყნებული ახალი ამბია. გთხოვთ, შეადაროთ ოპოზიციის მხრიდან გამოქვეყნებულ ახალი ამბებს სრული სურათის მისაღებად.'
+                    : 'This article is published from the establishment perspective. Please compare with opposition coverage for a complete picture.'
+                  : language === 'ka'
+                    ? 'ეს სტატია ოპოზიციის პერსპექტივიდან გამოქვეყნებული ახალი ამბია. გთხოვთ, შეადაროთ ხელისუფლების მხრიდან გამოქვეყნებულ ახალი ამბებს სრული სურათის მისაღებად.'
+                    : 'This article is published from the opposition perspective. Please compare with establishment coverage for a complete picture.'}
+              </p>
             </div>
 
-            <div className="analysis-card">
-              <h3>Comparison Insight</h3>
-              {relatedStories.length > 0 ? (
-                <p>
-                  This topic has coverage from both perspectives. The{' '}
-                  <strong>{story.category === 'establishment' ? 'opposition' : 'establishment'}</strong> sources present
-                  different viewpoints and emphasis on this issue. Compare the perspectives above to understand the full
-                  picture.
-                </p>
-              ) : (
-                <p>
-                  This topic currently has coverage from only the{' '}
-                  <strong>{story.category === 'establishment' ? 'establishment' : 'opposition'}</strong> perspective. To
-                  get a balanced view, look for coverage from other sources.
-                </p>
-              )}
-            </div>
-
-            <div className="analysis-card">
-              <h3>How to Verify</h3>
+            <div className="analysis-section">
+              <h3>{t('howToVerify' as any)}</h3>
               <ul>
-                <li>Compare coverage from both establishment and opposition sources</li>
-                <li>Check facts against international news agencies</li>
-                <li>Look for primary sources and official statements</li>
-                <li>Consider the timing and context of the reporting</li>
+                <li>
+                  {language === 'ka'
+                    ? 'შეადაროთ სხვადსხვა წყაროებიდან გამოქვეყნებული ახალი ამბები'
+                    : 'Compare news from multiple sources'}
+                </li>
+                <li>
+                  {language === 'ka'
+                    ? 'მოძებნეთ ფაქტობრივი მტკიცებულება და წყაროები'
+                    : 'Look for factual evidence and sources'}
+                </li>
+                <li>
+                  {language === 'ka'
+                    ? 'გაითვალისწინეთ, თუ რა შეიძლება იყოს ჟურნალისტის მიკერძოება'
+                    : 'Consider potential journalist bias'}
+                </li>
+                <li>
+                  {language === 'ka'
+                    ? 'გადამოწმეთ ინფორმაცია დამოუკიდებელი წყაროებით'
+                    : 'Verify information with independent sources'}
+                </li>
               </ul>
+            </div>
+
+            <div className="analysis-section">
+              <h3>{t('comparisonInsight' as any)}</h3>
+              <p>
+                {relatedStories.length > 0
+                  ? language === 'ka'
+                    ? `ეს თემა დაფარულია როგორც ხელისუფლებისა, ასევე ოპოზიციის მხრიდან. თითოეული პერსპექტივა ხაზს უსვამს სხვადსხვა ასპექტებს. ზემოთ იხილეთ ორივე მხრის თვალსაზრისი.`
+                    : `This topic is covered by both establishment and opposition sources. Each perspective highlights different aspects. See both viewpoints above.`
+                  : language === 'ka'
+                    ? 'ამ თემაზე ოპოზიციის მხრიდან გამოქვეყნებული ახალი ამბი ხელმისაწვდომი არ არის.'
+                    : 'No opposing perspective is available for this topic yet.'}
+              </p>
             </div>
           </div>
         )}
