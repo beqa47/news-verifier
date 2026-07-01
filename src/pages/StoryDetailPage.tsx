@@ -1,7 +1,11 @@
 import { useState, useEffect } from 'react';
 import '../styles/StoryDetailPage.css';
 import { NewsService, type NewsArticle } from '../services/newsService';
-import { TranslationService, type Language } from '../services/translationService';
+import { TranslationService, type Language, type TranslationKey } from '../services/translationService';
+import {
+  AiVerificationService,
+  type AiVerificationResult,
+} from '../services/aiVerificationService';
 
 interface StoryDetailPageProps {
   storyId: string;
@@ -14,15 +18,17 @@ export default function StoryDetailPage({ storyId, onBack }: StoryDetailPageProp
   const [activeTab, setActiveTab] = useState<'comparison' | 'analysis'>('comparison');
   const [loading, setLoading] = useState(true);
   const [language, setLanguage] = useState<Language>(() => TranslationService.getLanguage());
+  const [aiResult, setAiResult] = useState<AiVerificationResult | null>(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
 
   useEffect(() => {
     loadStory();
-    // Listen for language changes
-    const handleStorageChange = () => {
+    const handleLanguageChange = () => {
       setLanguage(TranslationService.getLanguage());
     };
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
+    window.addEventListener('languagechange', handleLanguageChange);
+    return () => window.removeEventListener('languagechange', handleLanguageChange);
   }, [storyId]);
 
   const loadStory = async () => {
@@ -34,7 +40,6 @@ export default function StoryDetailPage({ storyId, onBack }: StoryDetailPageProp
       if (selectedStory) {
         setStory(selectedStory);
 
-        // Find related stories from the opposite perspective
         const related = allNews.filter(
           (s) =>
             s.topic === selectedStory.topic &&
@@ -50,8 +55,8 @@ export default function StoryDetailPage({ storyId, onBack }: StoryDetailPageProp
     }
   };
 
-  const t = (key: keyof typeof TranslationService) => {
-    return TranslationService.t(key as any);
+  const t = (key: TranslationKey) => {
+    return TranslationService.t(key);
   };
 
   const getHeadline = (s: NewsArticle) => {
@@ -63,7 +68,7 @@ export default function StoryDetailPage({ storyId, onBack }: StoryDetailPageProp
   };
 
   const getSourceLabel = (category: string) => {
-    return category === 'establishment' ? t('establishmentView' as any) : t('oppositionView' as any);
+    return category === 'establishment' ? t('establishmentView') : t('oppositionView');
   };
 
   const getConfidenceColor = (score: number) => {
@@ -81,13 +86,28 @@ export default function StoryDetailPage({ storyId, onBack }: StoryDetailPageProp
     });
   };
 
+  const runAiVerification = async () => {
+    if (!story) return;
+
+    setAiLoading(true);
+    setAiError(null);
+    try {
+      const result = await AiVerificationService.verifyStory(story, relatedStories);
+      setAiResult(result);
+    } catch (error) {
+      setAiError(error instanceof Error ? error.message : t('aiUnavailable'));
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="story-detail-page">
         <button className="back-button" onClick={onBack}>
-          {t('back' as any)}
+          {t('back')}
         </button>
-        <div className="loading">{t('loading' as any)}</div>
+        <div className="loading">{t('loading')}</div>
       </div>
     );
   }
@@ -96,9 +116,9 @@ export default function StoryDetailPage({ storyId, onBack }: StoryDetailPageProp
     return (
       <div className="story-detail-page">
         <button className="back-button" onClick={onBack}>
-          {t('back' as any)}
+          {t('back')}
         </button>
-        <div className="error">{t('error' as any)}</div>
+        <div className="error">{t('error')}</div>
       </div>
     );
   }
@@ -106,7 +126,7 @@ export default function StoryDetailPage({ storyId, onBack }: StoryDetailPageProp
   return (
     <div className="story-detail-page">
       <button className="back-button" onClick={onBack}>
-        {t('back' as any)}
+        {t('back')}
       </button>
 
       <div className="story-header">
@@ -118,7 +138,7 @@ export default function StoryDetailPage({ storyId, onBack }: StoryDetailPageProp
           <span className="date">{formatDate(story.publishedAt)}</span>
           {story.originalUrl && (
             <a href={story.originalUrl} target="_blank" rel="noopener noreferrer" className="original-link">
-              {t('readOriginal' as any)}
+              {t('readOriginal')}
             </a>
           )}
         </div>
@@ -137,7 +157,7 @@ export default function StoryDetailPage({ storyId, onBack }: StoryDetailPageProp
               />
             </div>
             <span className="confidence-label" style={{ color: getConfidenceColor(story.confidenceScore) }}>
-              {story.confidenceScore}% {t('confidenceScore' as any)}
+              {story.confidenceScore}% {t('confidenceScore')}
             </span>
           </div>
         )}
@@ -148,13 +168,13 @@ export default function StoryDetailPage({ storyId, onBack }: StoryDetailPageProp
           className={`tab-button ${activeTab === 'comparison' ? 'active' : ''}`}
           onClick={() => setActiveTab('comparison')}
         >
-          {t('perspectives' as any)}
+          {t('perspectives')}
         </button>
         <button
           className={`tab-button ${activeTab === 'analysis' ? 'active' : ''}`}
           onClick={() => setActiveTab('analysis')}
         >
-          {t('analysis' as any)}
+          {t('analysis')}
         </button>
       </div>
 
@@ -167,7 +187,7 @@ export default function StoryDetailPage({ storyId, onBack }: StoryDetailPageProp
               <p className="summary">{getSummary(story)}</p>
               {story.originalUrl && (
                 <a href={story.originalUrl} target="_blank" rel="noopener noreferrer" className="source-button">
-                  {t('viewOnSource' as any)} →
+                  {t('viewOnSource')} →
                 </a>
               )}
             </div>
@@ -179,13 +199,13 @@ export default function StoryDetailPage({ storyId, onBack }: StoryDetailPageProp
                 <p className="summary">{getSummary(relatedStories[0])}</p>
                 {relatedStories[0].originalUrl && (
                   <a href={relatedStories[0].originalUrl} target="_blank" rel="noopener noreferrer" className="source-button">
-                    {t('viewOnSource' as any)} →
+                    {t('viewOnSource')} →
                   </a>
                 )}
               </div>
             ) : (
               <div className="perspective-card opposite empty">
-                <p>{t('noOpposing' as any)}</p>
+                <p>{t('noOpposing')}</p>
               </div>
             )}
           </div>
@@ -193,8 +213,93 @@ export default function StoryDetailPage({ storyId, onBack }: StoryDetailPageProp
 
         {activeTab === 'analysis' && (
           <div className="analysis-view">
+            <div className="analysis-section ai-verification-section">
+              <div className="ai-section-header">
+                <div>
+                  <h3>{t('aiVerification')}</h3>
+                  <p>
+                    {language === 'ka'
+                      ? 'AI ადარებს ორივე მხარის ტექსტს და იყენებს ქართული კონსტიტუციური პრინციპების საწყის კონტექსტს.'
+                      : 'AI compares both perspectives and checks them against starter Georgian constitutional context.'}
+                  </p>
+                </div>
+                <button className="ai-button" onClick={runAiVerification} disabled={aiLoading}>
+                  {aiLoading ? t('aiVerifying') : t('runAiVerification')}
+                </button>
+              </div>
+
+              {aiError && <p className="ai-error">{aiError}</p>}
+
+              {aiResult && (
+                <div className="ai-result">
+                  <div className="ai-verdict-row">
+                    <div>
+                      <span className="ai-label">{t('verdict')}</span>
+                      <strong>{aiResult.verdict.replaceAll('_', ' ')}</strong>
+                    </div>
+                    <div>
+                      <span className="ai-label">{t('confidenceScore')}</span>
+                      <strong>{aiResult.confidence}%</strong>
+                    </div>
+                    <div>
+                      <span className="ai-label">{t('model')}</span>
+                      <strong>{aiResult.model}</strong>
+                    </div>
+                  </div>
+
+                  <p className="ai-summary">{aiResult.summary}</p>
+
+                  {aiResult.claims.length > 0 && (
+                    <div className="ai-subsection">
+                      <h4>{t('claimsChecked')}</h4>
+                      <ul>
+                        {aiResult.claims.map((claim, index) => (
+                          <li key={`${claim.status}-${index}`}>
+                            <strong>{claim.status}:</strong> {claim.text}
+                            <span>{claim.reasoning}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {aiResult.legalConsiderations.length > 0 && (
+                    <div className="ai-subsection">
+                      <h4>{t('legalContext')}</h4>
+                      <ul>
+                        {aiResult.legalConsiderations.map((consideration, index) => (
+                          <li key={`${consideration}-${index}`}>{consideration}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {aiResult.questionsToVerify.length > 0 && (
+                    <div className="ai-subsection">
+                      <h4>{t('questionsToVerify')}</h4>
+                      <ul>
+                        {aiResult.questionsToVerify.map((question, index) => (
+                          <li key={`${question}-${index}`}>{question}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  <div className="ai-sources">
+                    {aiResult.legalContext.map((item) => (
+                      <a key={item.id} href={item.sourceUrl} target="_blank" rel="noopener noreferrer">
+                        {item.title}
+                      </a>
+                    ))}
+                  </div>
+
+                  <p className="ai-disclaimer">{aiResult.disclaimer}</p>
+                </div>
+              )}
+            </div>
+
             <div className="analysis-section">
-              <h3>{t('biasAssessment' as any)}</h3>
+              <h3>{t('biasAssessment')}</h3>
               <p>
                 {story.category === 'establishment'
                   ? language === 'ka'
@@ -207,33 +312,17 @@ export default function StoryDetailPage({ storyId, onBack }: StoryDetailPageProp
             </div>
 
             <div className="analysis-section">
-              <h3>{t('howToVerify' as any)}</h3>
+              <h3>{t('howToVerify')}</h3>
               <ul>
-                <li>
-                  {language === 'ka'
-                    ? 'შეადაროთ სხვადსხვა წყაროებიდან გამოქვეყნებული ახალი ამბები'
-                    : 'Compare news from multiple sources'}
-                </li>
-                <li>
-                  {language === 'ka'
-                    ? 'მოძებნეთ ფაქტობრივი მტკიცებულება და წყაროები'
-                    : 'Look for factual evidence and sources'}
-                </li>
-                <li>
-                  {language === 'ka'
-                    ? 'გაითვალისწინეთ, თუ რა შეიძლება იყოს ჟურნალისტის მიკერძოება'
-                    : 'Consider potential journalist bias'}
-                </li>
-                <li>
-                  {language === 'ka'
-                    ? 'გადამოწმეთ ინფორმაცია დამოუკიდებელი წყაროებით'
-                    : 'Verify information with independent sources'}
-                </li>
+                <li>{language === 'ka' ? 'შეადაროთ სხვადსხვა წყაროებიდან გამოქვეყნებული ახალი ამბები' : 'Compare news from multiple sources'}</li>
+                <li>{language === 'ka' ? 'მოძებნეთ ფაქტობრივი მტკიცებულება და წყაროები' : 'Look for factual evidence and sources'}</li>
+                <li>{language === 'ka' ? 'გაითვალისწინეთ, თუ რა შეიძლება იყოს ჟურნალისტის მიკერძოება' : 'Consider potential journalist bias'}</li>
+                <li>{language === 'ka' ? 'გადამოწმეთ ინფორმაცია დამოუკიდებელი წყაროებით' : 'Verify information with independent sources'}</li>
               </ul>
             </div>
 
             <div className="analysis-section">
-              <h3>{t('comparisonInsight' as any)}</h3>
+              <h3>{t('comparisonInsight')}</h3>
               <p>
                 {relatedStories.length > 0
                   ? language === 'ka'
