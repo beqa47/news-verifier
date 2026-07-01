@@ -16,7 +16,6 @@ function App() {
   const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
-    // Check for saved dark mode preference
     const savedDarkMode = localStorage.getItem('darkMode') === 'true';
     setDarkMode(savedDarkMode);
     if (savedDarkMode) {
@@ -42,7 +41,6 @@ function App() {
 
   return (
     <div className={`app ${darkMode ? 'dark' : 'light'}`}>
-      <div className="update-proof-banner">RED TEST UPDATE LIVE</div>
       <nav className="navbar">
         <div className="navbar-container">
           <div className="navbar-brand">
