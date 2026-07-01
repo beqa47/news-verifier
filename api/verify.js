@@ -1,6 +1,9 @@
 import { selectLegalContext } from './legalKnowledge.js';
 
-const DEFAULT_MODEL = 'gpt-5.5';
+const DEFAULT_MODEL = 'gpt-5.4-mini';
+const CACHE_TTL_MS = 6 * 60 * 60 * 1000;
+const verificationCache = globalThis.__verificationCache || new Map();
+globalThis.__verificationCache = verificationCache;
 
 function normalizeStory(story) {
   return {
@@ -11,6 +14,41 @@ function normalizeStory(story) {
     topic: String(story?.topic || '').slice(0, 120),
     originalUrl: String(story?.originalUrl || story?.sourceUrl || '').slice(0, 500),
   };
+}
+
+function getCacheKey(model, primary, opposing) {
+  return JSON.stringify({
+    model,
+    primary: {
+      headline: primary.headline,
+      originalUrl: primary.originalUrl,
+      topic: primary.topic,
+    },
+    opposing: opposing.map((story) => ({
+      headline: story.headline,
+      originalUrl: story.originalUrl,
+      topic: story.topic,
+    })),
+  });
+}
+
+function getCachedResult(cacheKey) {
+  const cached = verificationCache.get(cacheKey);
+  if (!cached) return null;
+
+  if (Date.now() - cached.createdAt > CACHE_TTL_MS) {
+    verificationCache.delete(cacheKey);
+    return null;
+  }
+
+  return cached.result;
+}
+
+function setCachedResult(cacheKey, result) {
+  verificationCache.set(cacheKey, {
+    createdAt: Date.now(),
+    result,
+  });
 }
 
 function extractResponseText(payload) {
@@ -77,11 +115,22 @@ export default async function handler(request, response) {
   }
 
   try {
+    const model = process.env.OPENAI_MODEL || DEFAULT_MODEL;
     const primary = normalizeStory(request.body?.story);
     const opposing = Array.isArray(request.body?.relatedStories)
       ? request.body.relatedStories.slice(0, 3).map(normalizeStory)
       : [];
     const legalContext = selectLegalContext([primary, ...opposing]);
+    const cacheKey = getCacheKey(model, primary, opposing);
+    const cachedResult = getCachedResult(cacheKey);
+
+    if (cachedResult) {
+      response.setHeader('Cache-Control', 's-maxage=21600, stale-while-revalidate=86400');
+      return response.status(200).json({
+        ...cachedResult,
+        cached: true,
+      });
+    }
 
     const prompt = {
       primary,
@@ -105,7 +154,7 @@ export default async function handler(request, response) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: process.env.OPENAI_MODEL || DEFAULT_MODEL,
+        model,
         input: [
           {
             role: 'system',
@@ -127,14 +176,18 @@ export default async function handler(request, response) {
       });
     }
 
-    const result = validateResult(parseJson(extractResponseText(payload)));
-    return response.status(200).json({
-      ...result,
-      model: process.env.OPENAI_MODEL || DEFAULT_MODEL,
+    const result = {
+      ...validateResult(parseJson(extractResponseText(payload))),
+      model,
       legalContext,
+      cached: false,
       disclaimer:
         'AI analysis can miss context and is not legal advice. Verify important claims with primary sources and qualified legal review.',
-    });
+    };
+
+    setCachedResult(cacheKey, result);
+    response.setHeader('Cache-Control', 's-maxage=21600, stale-while-revalidate=86400');
+    return response.status(200).json(result);
   } catch (error) {
     return response.status(500).json({
       error: error instanceof Error ? error.message : 'Verification failed.',
