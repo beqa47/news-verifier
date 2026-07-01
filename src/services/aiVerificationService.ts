@@ -30,13 +30,34 @@ export interface AiVerificationResult {
   model: string;
   legalContext: LegalContextItem[];
   disclaimer: string;
+  cached?: boolean;
 }
 
 export class AiVerificationService {
+  private static cache = new Map<string, AiVerificationResult>();
+
+  private static getCacheKey(story: NewsArticle, relatedStories: NewsArticle[]) {
+    return JSON.stringify({
+      story: story.originalUrl || story.id || story.headline,
+      related: relatedStories.map((related) => related.originalUrl || related.id || related.headline),
+    });
+  }
+
+  static getCachedVerification(
+    story: NewsArticle,
+    relatedStories: NewsArticle[]
+  ): AiVerificationResult | null {
+    return this.cache.get(this.getCacheKey(story, relatedStories)) || null;
+  }
+
   static async verifyStory(
     story: NewsArticle,
     relatedStories: NewsArticle[]
   ): Promise<AiVerificationResult> {
+    const cacheKey = this.getCacheKey(story, relatedStories);
+    const cached = this.cache.get(cacheKey);
+    if (cached) return { ...cached, cached: true };
+
     const response = await fetch('/api/verify', {
       method: 'POST',
       headers: {
@@ -50,6 +71,8 @@ export class AiVerificationService {
       throw new Error(payload.error || 'AI verification failed.');
     }
 
-    return payload as AiVerificationResult;
+    const result = payload as AiVerificationResult;
+    this.cache.set(cacheKey, result);
+    return result;
   }
 }
