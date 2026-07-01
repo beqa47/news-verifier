@@ -64,7 +64,7 @@ const MOCK_NEWS_DATA: NewsArticle[] = [
     publishedAt: '2026-06-24T12:00:00.000Z',
     topic: 'Democracy',
     topicKa: 'დემოკრატია',
-    imageUrl: 'https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=900&h=520&fit=crop',
+    imageUrl: 'https://civil.ge/wp-content/uploads/2026/06/PACE.jpg',
     trending: true,
   },
   {
@@ -82,7 +82,7 @@ const MOCK_NEWS_DATA: NewsArticle[] = [
     publishedAt: '2026-06-26T12:00:00.000Z',
     topic: 'Democracy',
     topicKa: 'დემოკრატია',
-    imageUrl: 'https://images.unsplash.com/photo-1541872705-1f73c6400ec9?w=900&h=520&fit=crop',
+    imageUrl: 'https://civil.ge/wp-content/uploads/2026/06/Irakli-Kobakhidze-3-e1782482712199.jpg',
     trending: true,
   },
   {
@@ -100,7 +100,7 @@ const MOCK_NEWS_DATA: NewsArticle[] = [
     publishedAt: '2026-06-26T12:00:00.000Z',
     topic: 'Foreign Policy',
     topicKa: 'საგარეო პოლიტიკა',
-    imageUrl: 'https://images.unsplash.com/photo-1521295121783-8a321d551ad2?w=900&h=520&fit=crop',
+    imageUrl: 'https://assets.bucket.fourthestate.app/oc-media-prod/content/images/2026/06/Georgian-soldiers-on-Georgia-s-Indpendence-Day-2026_20260626-111202.png',
     trending: true,
   },
   {
@@ -118,7 +118,7 @@ const MOCK_NEWS_DATA: NewsArticle[] = [
     publishedAt: '2026-06-09T09:04:00.000Z',
     topic: 'Foreign Policy',
     topicKa: 'საგარეო პოლიტიკა',
-    imageUrl: 'https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=900&h=520&fit=crop',
+    imageUrl: 'https://civil.ge/wp-content/uploads/2026/06/Joe-Wilson-scaled.png',
     trending: true,
   },
   {
@@ -136,7 +136,7 @@ const MOCK_NEWS_DATA: NewsArticle[] = [
     publishedAt: '2026-06-30T12:00:00.000Z',
     topic: 'Economy',
     topicKa: 'ეკონომიკა',
-    imageUrl: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=900&h=520&fit=crop',
+    imageUrl: 'https://cdn.1tv.ge/lang/app/uploads/2026/06/1782805896-1782804758-capture.jpg',
     trending: true,
   },
   {
@@ -154,7 +154,7 @@ const MOCK_NEWS_DATA: NewsArticle[] = [
     publishedAt: '2026-05-19T12:00:00.000Z',
     topic: 'Economy',
     topicKa: 'ეკონომიკა',
-    imageUrl: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=900&h=520&fit=crop',
+    imageUrl: 'https://cdn.1tv.ge/lang/app/uploads/2026/05/1779267863-1726215159-saqstati.jpg',
   },
   {
     id: 'migration-rules-civil',
@@ -171,7 +171,7 @@ const MOCK_NEWS_DATA: NewsArticle[] = [
     publishedAt: '2026-06-08T12:00:00.000Z',
     topic: 'Migration',
     topicKa: 'მიგრაცია',
-    imageUrl: 'https://images.unsplash.com/photo-1521791136064-7986c2920216?w=900&h=520&fit=crop',
+    imageUrl: 'https://civil.ge/wp-content/uploads/2026/06/Migration-Department.jpg',
   },
   {
     id: 'sham-marriages-oc',
@@ -188,7 +188,7 @@ const MOCK_NEWS_DATA: NewsArticle[] = [
     publishedAt: '2026-06-10T12:00:00.000Z',
     topic: 'Migration',
     topicKa: 'მიგრაცია',
-    imageUrl: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=900&h=520&fit=crop',
+    imageUrl: 'https://assets.bucket.fourthestate.app/oc-media-prod/content/images/2025/04/Moscow-Tbilisi-first-flight-landing-in-tbs-airport-MN-19-05-23-8433.jpg',
   },
 ];
 
