@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import '../styles/HomePage.css';
 import { NewsService, type NewsArticle } from '../services/newsService';
-import { TranslationService, type Language } from '../services/translationService';
+import { TranslationService, type Language, type TranslationKey } from '../services/translationService';
+import { AiVerificationService } from '../services/aiVerificationService';
 
 interface HomePageProps {
   onSelectStory: (id: string) => void;
@@ -13,10 +14,20 @@ export default function HomePage({ onSelectStory }: HomePageProps) {
   const [loading, setLoading] = useState(true);
   const [showTrending, setShowTrending] = useState(true);
   const [language, setLanguage] = useState<Language>(() => TranslationService.getLanguage());
+  const [aiConfidence, setAiConfidence] = useState<Record<string, number>>({});
+  const [checkingConfidence, setCheckingConfidence] = useState<Record<string, boolean>>({});
+  const preloadedStoryIds = useRef(new Set<string>());
 
   useEffect(() => {
     loadStories();
   }, []);
+
+  useEffect(() => {
+    if (stories.length === 0) return;
+
+    const visibleStories = (showTrending ? trendingStories : stories).slice(0, 6);
+    preloadConfidence(visibleStories);
+  }, [stories, trendingStories, showTrending]);
 
   const loadStories = async () => {
     setLoading(true);
@@ -37,8 +48,43 @@ export default function HomePage({ onSelectStory }: HomePageProps) {
     TranslationService.setLanguage(lang);
   };
 
-  const t = (key: keyof typeof TranslationService) => {
-    return TranslationService.t(key as any);
+  const getRelatedStories = (story: NewsArticle) => {
+    return stories
+      .filter(
+        (candidate) =>
+          candidate.topic === story.topic &&
+          candidate.category !== story.category &&
+          candidate.id !== story.id
+      )
+      .slice(0, 3);
+  };
+
+  const preloadConfidence = async (visibleStories: NewsArticle[]) => {
+    for (const story of visibleStories) {
+      if (preloadedStoryIds.current.has(story.id)) continue;
+      preloadedStoryIds.current.add(story.id);
+
+      const relatedStories = getRelatedStories(story);
+      const cached = AiVerificationService.getCachedVerification(story, relatedStories);
+      if (cached) {
+        setAiConfidence((current) => ({ ...current, [story.id]: cached.confidence }));
+        continue;
+      }
+
+      setCheckingConfidence((current) => ({ ...current, [story.id]: true }));
+      try {
+        const result = await AiVerificationService.verifyStory(story, relatedStories);
+        setAiConfidence((current) => ({ ...current, [story.id]: result.confidence }));
+      } catch (error) {
+        console.warn('AI confidence preload failed:', error);
+      } finally {
+        setCheckingConfidence((current) => ({ ...current, [story.id]: false }));
+      }
+    }
+  };
+
+  const t = (key: TranslationKey) => {
+    return TranslationService.t(key);
   };
 
   const getTopicColor = (topic: string) => {
@@ -55,18 +101,24 @@ export default function HomePage({ onSelectStory }: HomePageProps) {
       ინფრასტრუქტურა: '#8b5cf6',
       Technology: '#ec4899',
       ტექნოლოგია: '#ec4899',
+      Democracy: '#0071e3',
+      დემოკრატია: '#0071e3',
+      'Foreign Policy': '#5856d6',
+      'საგარეო პოლიტიკა': '#5856d6',
+      Migration: '#af52de',
+      მიგრაცია: '#af52de',
     };
     return colors[topic] || '#6b7280';
   };
 
   const getSourceBadgeColor = (category: string) => {
-    return category === 'establishment' ? '#e74c3c' : '#27ae60';
+    return category === 'establishment' ? '#ff3b30' : '#34c759';
   };
 
   const getConfidenceColor = (score: number) => {
-    if (score >= 80) return '#27ae60'; // Green - High confidence
-    if (score >= 60) return '#f39c12'; // Orange - Medium confidence
-    return '#e74c3c'; // Red - Low confidence
+    if (score >= 80) return '#34c759';
+    if (score >= 60) return '#ff9500';
+    return '#ff3b30';
   };
 
   const formatDate = (dateString: string) => {
@@ -90,6 +142,10 @@ export default function HomePage({ onSelectStory }: HomePageProps) {
     return language === 'ka' ? story.topicKa : story.topic;
   };
 
+  const getDisplayConfidence = (story: NewsArticle) => {
+    return aiConfidence[story.id] ?? story.confidenceScore;
+  };
+
   const displayStories = showTrending ? trendingStories : stories;
 
   return (
@@ -110,12 +166,12 @@ export default function HomePage({ onSelectStory }: HomePageProps) {
       </div>
 
       <div className="hero-section">
-        <h2>{t('appTitle' as any)}</h2>
-        <p>{t('appSubtitle' as any)}</p>
+        <h2>{t('appTitle')}</h2>
+        <p>{t('appSubtitle')}</p>
         <p className="sources-info">
-          <strong>{t('establishmentSources' as any)}:</strong> {t('imeditv' as any)}, {t('publicBroadcaster' as any)} |{' '}
-          <strong>{t('oppositionSources' as any)}:</strong> {t('mtavaritv' as any)}, {t('netgazeti' as any)},{' '}
-          {t('formulatv' as any)}
+          <strong>{t('establishmentSources')}:</strong> {t('imeditv')}, {t('publicBroadcaster')} |{' '}
+          <strong>{t('oppositionSources')}:</strong> {t('mtavaritv')}, {t('netgazeti')},{' '}
+          {t('formulatv')}
         </p>
       </div>
 
@@ -124,86 +180,95 @@ export default function HomePage({ onSelectStory }: HomePageProps) {
           className={`toggle-btn ${showTrending ? 'active' : ''}`}
           onClick={() => setShowTrending(true)}
         >
-          {t('trending' as any)}
+          {t('trending')}
         </button>
         <button
           className={`toggle-btn ${!showTrending ? 'active' : ''}`}
           onClick={() => setShowTrending(false)}
         >
-          {t('allNews' as any)}
+          {t('allNews')}
         </button>
       </div>
 
       {loading ? (
-        <div className="loading">{t('loading' as any)}</div>
+        <div className="loading">{t('loading')}</div>
       ) : (
         <div className="stories-grid">
-          {displayStories.map((story) => (
-            <div
-              key={story.id}
-              className="story-card"
-              onClick={() => onSelectStory(story.id)}
-            >
-              {story.imageUrl && (
-                <div className="story-image">
-                  <img src={story.imageUrl} alt={getHeadline(story)} />
-                  {story.trending && <span className="trending-badge">{t('trending' as any)}</span>}
-                </div>
-              )}
+          {displayStories.map((story) => {
+            const displayConfidence = getDisplayConfidence(story);
+            const isChecking = checkingConfidence[story.id] && aiConfidence[story.id] === undefined;
 
-              <div className="story-content">
-                <div className="story-header">
-                  <span
-                    className="topic-badge"
-                    style={{
-                      backgroundColor: `${getTopicColor(getTopic(story))}20`,
-                      color: getTopicColor(getTopic(story)),
-                    }}
-                  >
-                    {getTopic(story)}
-                  </span>
-                  <span className="date">{formatDate(story.publishedAt)}</span>
-                </div>
+            return (
+              <div
+                key={story.id}
+                className="story-card"
+                onClick={() => onSelectStory(story.id)}
+              >
+                {story.imageUrl && (
+                  <div className="story-image">
+                    <img src={story.imageUrl} alt={getHeadline(story)} />
+                    {story.trending && <span className="trending-badge">{t('trending')}</span>}
+                  </div>
+                )}
 
-                <h3 className="story-headline">{getHeadline(story)}</h3>
-                <p className="story-summary">{getSummary(story)}</p>
-
-                <div className="story-footer">
-                  <div className="story-meta">
+                <div className="story-content">
+                  <div className="story-header">
                     <span
-                      className="source-badge"
+                      className="topic-badge"
                       style={{
-                        backgroundColor: `${getSourceBadgeColor(story.category)}20`,
-                        color: getSourceBadgeColor(story.category),
+                        backgroundColor: `${getTopicColor(getTopic(story))}20`,
+                        color: getTopicColor(getTopic(story)),
                       }}
                     >
-                      {story.source}
+                      {getTopic(story)}
                     </span>
-                    {story.confidenceScore !== undefined && (
-                      <div className="confidence-score">
-                        <div className="confidence-bar">
-                          <div
-                            className="confidence-fill"
-                            style={{
-                              width: `${story.confidenceScore}%`,
-                              backgroundColor: getConfidenceColor(story.confidenceScore),
-                            }}
-                          />
-                        </div>
-                        <span
-                          className="confidence-text"
-                          style={{ color: getConfidenceColor(story.confidenceScore) }}
-                        >
-                          {story.confidenceScore}% {t('confidenceScore' as any)}
-                        </span>
-                      </div>
-                    )}
+                    <span className="date">{formatDate(story.publishedAt)}</span>
                   </div>
-                  <span className="view-comparison">{t('viewComparison' as any)}</span>
+
+                  <h3 className="story-headline">{getHeadline(story)}</h3>
+                  <p className="story-summary">{getSummary(story)}</p>
+
+                  <div className="story-footer">
+                    <div className="story-meta">
+                      <span
+                        className="source-badge"
+                        style={{
+                          backgroundColor: `${getSourceBadgeColor(story.category)}20`,
+                          color: getSourceBadgeColor(story.category),
+                        }}
+                      >
+                        {story.source}
+                      </span>
+                      {displayConfidence !== undefined && (
+                        <div className="confidence-score">
+                          <div className="confidence-bar">
+                            <div
+                              className="confidence-fill"
+                              style={{
+                                width: `${displayConfidence}%`,
+                                backgroundColor: getConfidenceColor(displayConfidence),
+                              }}
+                            />
+                          </div>
+                          <span
+                            className="confidence-text"
+                            style={{ color: getConfidenceColor(displayConfidence) }}
+                          >
+                            {isChecking
+                              ? language === 'ka'
+                                ? 'AI ამოწმებს...'
+                                : 'AI checking...'
+                              : `${displayConfidence}% ${t('confidenceScore')}`}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    <span className="view-comparison">{t('viewComparison')}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
