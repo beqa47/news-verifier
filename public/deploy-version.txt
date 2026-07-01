@@ -1,0 +1,2 @@
+deploy-version=2026-07-01-ai-confidence-core
+includes=remove-hardcoded-confidence-scores,normalize-ai-verdicts
