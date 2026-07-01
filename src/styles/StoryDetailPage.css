@@ -272,6 +272,124 @@
   font-weight: 600;
 }
 
+.ai-verification-section {
+  border-color: rgba(10, 126, 164, 0.35);
+}
+
+.ai-section-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.ai-section-header p {
+  color: var(--muted);
+  margin-bottom: 0;
+}
+
+.ai-button {
+  flex: 0 0 auto;
+  border: none;
+  border-radius: 0.5rem;
+  background-color: var(--primary);
+  color: white;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 0.75rem 1rem;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.ai-button:hover:not(:disabled) {
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
+
+.ai-button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.ai-error {
+  border: 1px solid rgba(231, 76, 60, 0.35);
+  border-radius: 0.5rem;
+  color: #e74c3c;
+  margin-top: 1rem;
+  padding: 0.75rem;
+}
+
+.ai-result {
+  border-top: 1px solid var(--border);
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+}
+
+.ai-verdict-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.ai-verdict-row > div {
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 0.85rem;
+}
+
+.ai-label {
+  color: var(--muted);
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+  text-transform: uppercase;
+}
+
+.ai-summary {
+  font-weight: 600;
+}
+
+.ai-subsection {
+  margin-top: 1rem;
+}
+
+.ai-subsection h4 {
+  color: var(--foreground);
+  font-size: 0.95rem;
+  margin-bottom: 0.75rem;
+}
+
+.ai-subsection li span {
+  color: var(--muted);
+  display: block;
+  margin-top: 0.2rem;
+}
+
+.ai-sources {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.ai-sources a {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--primary);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.35rem 0.7rem;
+  text-decoration: none;
+}
+
+.ai-disclaimer {
+  color: var(--muted) !important;
+  font-size: 0.82rem !important;
+  margin-top: 1rem;
+}
+
 @media (max-width: 768px) {
   .story-title,
   .story-header h1 {
@@ -313,6 +431,18 @@
 
   .analysis-section {
     padding: 1rem;
+  }
+
+  .ai-section-header {
+    flex-direction: column;
+  }
+
+  .ai-button {
+    width: 100%;
+  }
+
+  .ai-verdict-row {
+    grid-template-columns: 1fr;
   }
 
   .confidence-section {
