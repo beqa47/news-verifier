@@ -74,12 +74,6 @@ export default function StoryDetailPage({ storyId, onBack }: StoryDetailPageProp
     return category === 'establishment' ? t('establishmentView') : t('oppositionView');
   };
 
-  const getConfidenceColor = (score: number) => {
-    if (score >= 80) return '#27ae60';
-    if (score >= 60) return '#f39c12';
-    return '#e74c3c';
-  };
-
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString(language === 'ka' ? 'ka-GE' : 'en-US', {
@@ -129,13 +123,6 @@ export default function StoryDetailPage({ storyId, onBack }: StoryDetailPageProp
     );
   }
 
-  const headerConfidence = aiResult?.confidence;
-  const headerConfidenceText = headerConfidence === undefined
-    ? language === 'ka'
-      ? 'AI ამოწმებს...'
-      : 'AI checking...'
-    : `${headerConfidence}% ${t('confidenceScore')}`;
-
   return (
     <div className="story-detail-page">
       <button className="back-button" onClick={onBack}>
@@ -157,29 +144,6 @@ export default function StoryDetailPage({ storyId, onBack }: StoryDetailPageProp
         </div>
 
         <h1 className="story-title">{getHeadline(story)}</h1>
-
-        <div className="confidence-section">
-          <div className="confidence-bar">
-            <div
-              className="confidence-fill"
-              style={{
-                width: headerConfidence === undefined ? '100%' : `${headerConfidence}%`,
-                backgroundColor:
-                  headerConfidence === undefined
-                    ? 'rgba(118, 118, 128, 0.28)'
-                    : getConfidenceColor(headerConfidence),
-              }}
-            />
-          </div>
-          <span
-            className="confidence-label"
-            style={{
-              color: headerConfidence === undefined ? '#8e8e93' : getConfidenceColor(headerConfidence),
-            }}
-          >
-            {headerConfidenceText}
-          </span>
-        </div>
       </div>
 
       <div className="tabs">
