@@ -25,7 +25,7 @@ export default function HomePage({ onSelectStory }: HomePageProps) {
   useEffect(() => {
     if (stories.length === 0) return;
 
-    const visibleStories = (showTrending ? trendingStories : stories).slice(0, 6);
+    const visibleStories = showTrending ? trendingStories : stories;
     preloadConfidence(visibleStories);
   }, [stories, trendingStories, showTrending]);
 
@@ -143,7 +143,7 @@ export default function HomePage({ onSelectStory }: HomePageProps) {
   };
 
   const getDisplayConfidence = (story: NewsArticle) => {
-    return aiConfidence[story.id] ?? story.confidenceScore;
+    return aiConfidence[story.id];
   };
 
   const displayStories = showTrending ? trendingStories : stories;
@@ -196,7 +196,12 @@ export default function HomePage({ onSelectStory }: HomePageProps) {
         <div className="stories-grid">
           {displayStories.map((story) => {
             const displayConfidence = getDisplayConfidence(story);
-            const isChecking = checkingConfidence[story.id] && aiConfidence[story.id] === undefined;
+            const isChecking = checkingConfidence[story.id] || displayConfidence === undefined;
+            const confidenceText = isChecking
+              ? language === 'ka'
+                ? 'AI ამოწმებს...'
+                : 'AI checking...'
+              : `${displayConfidence}% ${t('confidenceScore')}`;
 
             return (
               <div
@@ -239,29 +244,31 @@ export default function HomePage({ onSelectStory }: HomePageProps) {
                       >
                         {story.source}
                       </span>
-                      {displayConfidence !== undefined && (
-                        <div className="confidence-score">
-                          <div className="confidence-bar">
-                            <div
-                              className="confidence-fill"
-                              style={{
-                                width: `${displayConfidence}%`,
-                                backgroundColor: getConfidenceColor(displayConfidence),
-                              }}
-                            />
-                          </div>
-                          <span
-                            className="confidence-text"
-                            style={{ color: getConfidenceColor(displayConfidence) }}
-                          >
-                            {isChecking
-                              ? language === 'ka'
-                                ? 'AI ამოწმებს...'
-                                : 'AI checking...'
-                              : `${displayConfidence}% ${t('confidenceScore')}`}
-                          </span>
+                      <div className="confidence-score">
+                        <div className="confidence-bar">
+                          <div
+                            className="confidence-fill"
+                            style={{
+                              width: displayConfidence === undefined ? '100%' : `${displayConfidence}%`,
+                              backgroundColor:
+                                displayConfidence === undefined
+                                  ? 'rgba(118, 118, 128, 0.28)'
+                                  : getConfidenceColor(displayConfidence),
+                            }}
+                          />
                         </div>
-                      )}
+                        <span
+                          className="confidence-text"
+                          style={{
+                            color:
+                              displayConfidence === undefined
+                                ? '#8e8e93'
+                                : getConfidenceColor(displayConfidence),
+                          }}
+                        >
+                          {confidenceText}
+                        </span>
+                      </div>
                     </div>
                     <span className="view-comparison">{t('viewComparison')}</span>
                   </div>
