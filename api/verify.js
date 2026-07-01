@@ -2,7 +2,7 @@ import { selectLegalContext } from './legalKnowledge.js';
 
 const DEFAULT_MODEL = 'gpt-5.4-mini';
 const OUTPUT_LANGUAGE = 'ka-GE';
-const VERDICT_POLICY = 'confidence-v2';
+const VERDICT_POLICY = 'confidence-v3-short-summary';
 const CACHE_TTL_MS = 6 * 60 * 60 * 1000;
 const verificationCache = globalThis.__verificationCache || new Map();
 globalThis.__verificationCache = verificationCache;
@@ -91,7 +91,7 @@ function validateResult(result) {
   return {
     verdict: normalizeVerdict(confidence),
     confidence,
-    summary: String(result.summary || '').slice(0, 1000),
+    summary: String(result.summary || '').slice(0, 700),
     claims: Array.isArray(result.claims)
       ? result.claims.slice(0, 6).map((claim) => ({
           text: String(claim.text || '').slice(0, 500),
@@ -148,13 +148,15 @@ export default async function handler(request, response) {
       outputLanguage: 'Georgian only. Use natural, clear Georgian for every text field.',
       verdictPolicy:
         'ვერდიქტი ყოველთვის უნდა შეესაბამებოდეს confidence-ს: 80-100 => მტკიცებულებები საკმარისია; 60-79 => მტკიცებულებები ნაწილობრივ საკმარისია; 0-59 => მეტი მტკიცებულებაა საჭირო.',
+      summaryLength:
+        'summary უნდა იყოს დაახლოებით 30%-ით მოკლე, ვიდრე ჩვეულებრივი შეჯამება: მაქსიმუმ 2 მოკლე წინადადება ან 45 სიტყვა.',
       primary,
       opposing,
       legalContext,
       outputSchema: {
         verdict: 'ზუსტად ერთი ქართული ფრაზა confidence-ის მიხედვით: მტკიცებულებები საკმარისია | მტკიცებულებები ნაწილობრივ საკმარისია | მეტი მტკიცებულებაა საჭირო',
         confidence: 'number from 0 to 100',
-        summary: 'short balanced explanation in Georgian',
+        summary: 'very concise balanced explanation in Georgian, max 2 short sentences or 45 words',
         claims: [{ text: 'claim in Georgian', status: 'status in Georgian', reasoning: 'reasoning in Georgian' }],
         legalConsiderations: ['relevant Georgian legal or constitutional principle in Georgian'],
         questionsToVerify: ['specific follow-up evidence needed in Georgian'],
@@ -174,7 +176,7 @@ export default async function handler(request, response) {
           {
             role: 'system',
             content:
-              'შენ ხარ ქართული საჯარო ინტერესის ჟურნალისტიკის AI გადამმოწმებელი. ყველა პასუხი უნდა იყოს სრულად ქართულ ენაზე. შეადარე ხელისუფლებასთან და ოპოზიციასთან ასოცირებული გაშუქებები. გამოიყენე მოწოდებული ქართული სამართლებრივი/კონსტიტუციური კონტექსტი მხოლოდ კონტექსტად და არა იურიდიულ რჩევად. არ გამოიგონო ფაქტები, კანონები, ციტატები ან წყაროების შინაარსი. confidence და verdict ერთმანეთს არ უნდა ეწინააღმდეგებოდეს: 80-100 ნიშნავს „მტკიცებულებები საკმარისია“, 60-79 ნიშნავს „მტკიცებულებები ნაწილობრივ საკმარისია“, 0-59 ნიშნავს „მეტი მტკიცებულებაა საჭირო“. დააბრუნე მხოლოდ ვალიდური JSON მოთხოვნილი სქემით. JSON-ის ყველა ტექსტური ველი, მათ შორის verdict, status, summary, reasoning, legalConsiderations და questionsToVerify, უნდა იყოს ქართულად.',
+              'შენ ხარ ქართული საჯარო ინტერესის ჟურნალისტიკის AI გადამმოწმებელი. ყველა პასუხი უნდა იყოს სრულად ქართულ ენაზე. შეადარე ხელისუფლებასთან და ოპოზიციასთან ასოცირებული გაშუქებები. გამოიყენე მოწოდებული ქართული სამართლებრივი/კონსტიტუციური კონტექსტი მხოლოდ კონტექსტად და არა იურიდიულ რჩევად. არ გამოიგონო ფაქტები, კანონები, ციტატები ან წყაროების შინაარსი. summary უნდა იყოს ძალიან მოკლე: მაქსიმუმ 2 მოკლე წინადადება ან 45 სიტყვა. confidence და verdict ერთმანეთს არ უნდა ეწინააღმდეგებოდეს: 80-100 ნიშნავს „მტკიცებულებები საკმარისია“, 60-79 ნიშნავს „მტკიცებულებები ნაწილობრივ საკმარისია“, 0-59 ნიშნავს „მეტი მტკიცებულებაა საჭირო“. დააბრუნე მხოლოდ ვალიდური JSON მოთხოვნილი სქემით. JSON-ის ყველა ტექსტური ველი, მათ შორის verdict, status, summary, reasoning, legalConsiderations და questionsToVerify, უნდა იყოს ქართულად.',
           },
           {
             role: 'user',
