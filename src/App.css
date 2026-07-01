@@ -64,6 +64,9 @@ textarea {
   backdrop-filter: saturate(180%) blur(22px);
   background-color: var(--surface);
   border-bottom: 1px solid var(--border);
+  position: static !important;
+  top: auto !important;
+  z-index: auto !important;
 }
 
 .navbar-container {
@@ -74,6 +77,8 @@ textarea {
   max-width: 1180px;
   min-height: 76px;
   padding: 0 1.25rem;
+  position: static !important;
+  top: auto !important;
 }
 
 .navbar-brand h1 {
@@ -94,6 +99,8 @@ textarea {
   align-items: center;
   display: flex;
   gap: 0.45rem;
+  position: static !important;
+  top: auto !important;
 }
 
 .nav-button,
