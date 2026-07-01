@@ -1,40 +1,47 @@
 .settings-page {
-  max-width: 600px;
   margin: 0 auto;
+  max-width: 720px;
   width: 100%;
 }
 
 .settings-page h2 {
-  font-size: 2rem;
-  margin-bottom: 2rem;
   color: var(--foreground);
+  font-size: clamp(2.2rem, 6vw, 4rem);
+  font-weight: 760;
+  letter-spacing: 0;
+  line-height: 1;
+  margin-bottom: 1.6rem;
+  text-align: center;
 }
 
 .settings-section {
-  background-color: var(--surface);
+  background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 0.75rem;
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  margin-bottom: 1rem;
+  padding: 1.35rem;
 }
 
 .settings-section h3 {
-  font-size: 1rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
   color: var(--foreground);
+  font-size: 1rem;
+  font-weight: 760;
+  margin-bottom: 1rem;
 }
 
-.setting-item {
+.setting-item,
+.about-item {
+  align-items: center;
+  border-bottom: 1px solid var(--border);
   display: flex;
   justify-content: space-between;
-  align-items: center;
   padding: 1rem 0;
-  border-bottom: 1px solid var(--border);
 }
 
-.setting-item:last-child {
-  border-bottom: none;
+.setting-item:last-child,
+.about-item:last-child {
+  border-bottom: 0;
 }
 
 .setting-label {
@@ -43,14 +50,17 @@
   gap: 0.25rem;
 }
 
-.setting-label span:first-child {
-  font-weight: 600;
+.setting-label span:first-child,
+.about-item span:last-child {
   color: var(--foreground);
+  font-weight: 700;
 }
 
-.setting-value {
-  font-size: 0.85rem;
+.setting-value,
+.about-item span:first-child,
+.setting-description {
   color: var(--muted);
+  font-size: 0.88rem;
 }
 
 .toggle-button {
@@ -61,12 +71,12 @@
 }
 
 .toggle-switch {
-  width: 50px;
-  height: 28px;
-  background-color: var(--border);
-  border-radius: 14px;
+  background-color: rgba(118, 118, 128, 0.24);
+  border-radius: 999px;
+  height: 31px;
   position: relative;
-  transition: background-color 0.3s;
+  transition: background-color 0.25s ease;
+  width: 52px;
 }
 
 .toggle-switch.on {
@@ -74,127 +84,97 @@
 }
 
 .toggle-switch::after {
-  content: '';
-  position: absolute;
-  width: 24px;
-  height: 24px;
   background-color: white;
-  border-radius: 12px;
-  top: 2px;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  content: '';
+  height: 27px;
   left: 2px;
-  transition: left 0.3s;
+  position: absolute;
+  top: 2px;
+  transition: left 0.25s ease;
+  width: 27px;
 }
 
 .toggle-switch.on::after {
-  left: 24px;
+  left: 23px;
 }
 
 .language-options {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+  display: grid;
+  gap: 0.7rem;
 }
 
-.language-button {
-  background-color: var(--background);
+.language-button,
+.info-button {
+  align-items: center;
+  background-color: rgba(118, 118, 128, 0.08);
   border: 1px solid var(--border);
-  border-radius: 0.5rem;
-  padding: 1rem;
+  border-radius: var(--radius-md);
+  color: var(--foreground);
   cursor: pointer;
   display: flex;
+  font-weight: 650;
   justify-content: space-between;
-  align-items: center;
-  transition: all 0.2s;
+  min-height: 54px;
+  padding: 0 1rem;
+  text-align: left;
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  width: 100%;
 }
 
-.language-button:hover {
-  border-color: var(--primary);
+.language-button:hover,
+.info-button:hover {
   background-color: var(--primary-light);
+  border-color: rgba(0, 113, 227, 0.28);
+  transform: translateY(-1px);
 }
 
 .language-button.active {
-  border-color: var(--primary);
   background-color: var(--primary-light);
+  border-color: rgba(0, 113, 227, 0.32);
 }
 
 .language-name {
-  font-weight: 500;
   color: var(--foreground);
 }
 
-.checkmark {
+.checkmark,
+.info-button {
   color: var(--primary);
-  font-weight: 700;
 }
 
 .setting-description {
-  font-size: 0.85rem;
-  color: var(--muted);
-  margin-top: 0.75rem;
-}
-
-.about-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.75rem 0;
-  border-bottom: 1px solid var(--border);
-}
-
-.about-item:last-child {
-  border-bottom: none;
-}
-
-.about-item span:first-child {
-  color: var(--muted);
-}
-
-.about-item span:last-child {
-  font-weight: 600;
-  color: var(--foreground);
+  line-height: 1.5;
+  margin-top: 0.8rem;
 }
 
 .info-button {
-  width: 100%;
-  background-color: var(--background);
-  border: 1px solid var(--border);
-  border-radius: 0.5rem;
-  padding: 1rem;
-  margin-bottom: 0.75rem;
-  cursor: pointer;
-  text-align: left;
-  font-weight: 500;
-  color: var(--primary);
-  transition: all 0.2s;
+  margin-bottom: 0.7rem;
 }
 
-.info-button:hover {
-  background-color: var(--primary-light);
-  border-color: var(--primary);
+.info-button:last-child {
+  margin-bottom: 0;
 }
 
 .settings-footer {
-  text-align: center;
-  margin-top: 3rem;
-  padding-top: 2rem;
   border-top: 1px solid var(--border);
   color: var(--muted);
-  font-size: 0.85rem;
-}
-
-.settings-footer p {
-  margin: 0.5rem 0;
+  font-size: 0.84rem;
+  line-height: 1.7;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  text-align: center;
 }
 
 @media (max-width: 768px) {
-  .settings-page {
-    padding: 0;
+  .settings-section {
+    border-radius: 22px;
+    padding: 1rem;
   }
 
-  .settings-section {
-    border-radius: 0;
-    border-left: none;
-    border-right: none;
-    margin-bottom: 1rem;
+  .setting-item,
+  .about-item {
+    gap: 1rem;
   }
 }
