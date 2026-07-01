@@ -38,7 +38,16 @@ export const translations = {
     biasAssessment: 'Bias Assessment',
     comparisonInsight: 'Comparison Insight',
     howToVerify: 'How to Verify',
-    confidenceScore: '% True',
+    confidenceScore: 'confidence',
+    aiVerification: 'AI Verification',
+    runAiVerification: 'Run AI Verification',
+    aiVerifying: 'Checking with AI...',
+    aiUnavailable: 'AI verification is unavailable.',
+    verdict: 'Verdict',
+    model: 'Model',
+    legalContext: 'Legal Context',
+    claimsChecked: 'Claims Checked',
+    questionsToVerify: 'Questions to Verify',
     
     // Messages
     loading: 'Loading stories from Georgian news sources...',
@@ -111,7 +120,16 @@ export const translations = {
     biasAssessment: 'მიკერძოების შეფასება',
     comparisonInsight: 'შედარების შინაარსი',
     howToVerify: 'როგორ გადამოწმოთ',
-    confidenceScore: '% ჭეშმარიტი',
+    confidenceScore: 'სანდოობა',
+    aiVerification: 'AI გადამოწმება',
+    runAiVerification: 'AI გადამოწმების გაშვება',
+    aiVerifying: 'AI ამოწმებს...',
+    aiUnavailable: 'AI გადამოწმება მიუწვდომელია.',
+    verdict: 'დასკვნა',
+    model: 'მოდელი',
+    legalContext: 'სამართლებრივი კონტექსტი',
+    claimsChecked: 'შემოწმებული მტკიცებები',
+    questionsToVerify: 'გადასამოწმებელი კითხვები',
     
     // Messages
     loading: 'ქართული ახალი ამბების ჩატვირთვა...',
@@ -149,20 +167,26 @@ export const translations = {
 };
 
 export type Language = 'en' | 'ka';
+export type TranslationKey = keyof typeof translations.en;
 
 export class TranslationService {
+  private static isLanguage(value: string | null): value is Language {
+    return value === 'en' || value === 'ka';
+  }
+
   static setLanguage(lang: Language) {
     localStorage.setItem('language', lang);
+    window.dispatchEvent(new Event('languagechange'));
   }
 
   static getLanguage(): Language {
-    const saved = localStorage.getItem('language') as Language;
-    return saved || 'en';
+    const saved = localStorage.getItem('language');
+    return this.isLanguage(saved) ? saved : 'en';
   }
 
-  static t(key: keyof typeof translations.en): string {
+  static t(key: TranslationKey): string {
     const lang = this.getLanguage();
-    return translations[lang][key as keyof typeof translations[Language]] || key;
+    return translations[lang][key] || translations.en[key] || key;
   }
 
   static getAvailableLanguages(): Array<{ code: Language; name: string }> {
