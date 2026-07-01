@@ -131,7 +131,7 @@ const MOCK_NEWS_DATA: NewsArticle[] = [
       'AI შეჯამება: GPB/1TV-ის ცნობით, მაისში საქართველოს ეკონომიკამ 6.4%-ით გაიზარდა. სრული სურათისთვის საჭიროა ინფლაციის, ხელფასებისა და სექტორების მონაცემების შედარება.',
     source: '1TV / GPB',
     sourceUrl: 'https://1tv.ge/lang/en/',
-    originalUrl: 'https://1tv.ge/lang/en/',
+    originalUrl: 'https://1tv.ge/lang/en/news/georgia-posts-robust-6-4-economic-growth-for-may-pushing-year-to-date-expansion-to-7-8/',
     category: 'establishment',
     publishedAt: '2026-06-30T12:00:00.000Z',
     topic: 'Economy',
