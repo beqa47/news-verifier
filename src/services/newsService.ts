@@ -1,36 +1,29 @@
-// Georgian News Sources Configuration
 const GEORGIAN_NEWS_SOURCES = {
   establishment: [
     {
-      name: 'Imedi TV',
-      url: 'https://www.imedi.ge',
-      apiEndpoint: 'https://www.imedi.ge/ge/news',
+      name: 'Georgian Public Broadcaster',
+      url: 'https://1tv.ge/lang/en/',
+      apiEndpoint: 'https://1tv.ge/lang/en/',
       category: 'establishment',
     },
     {
-      name: 'Georgian Public Broadcaster',
-      url: 'https://1tv.ge',
-      apiEndpoint: 'https://1tv.ge/news',
+      name: 'Government / Official Sources',
+      url: 'https://www.gov.ge',
+      apiEndpoint: 'https://www.gov.ge',
       category: 'establishment',
     },
   ],
   opposition: [
     {
-      name: 'Mtavari TV',
-      url: 'https://mtavari.tv',
-      apiEndpoint: 'https://mtavari.tv/news',
+      name: 'Civil.ge',
+      url: 'https://civil.ge',
+      apiEndpoint: 'https://civil.ge',
       category: 'opposition',
     },
     {
-      name: 'Netgazeti',
-      url: 'https://netgazeti.ge',
-      apiEndpoint: 'https://netgazeti.ge/news',
-      category: 'opposition',
-    },
-    {
-      name: 'Formula TV',
-      url: 'https://formula.ge',
-      apiEndpoint: 'https://formula.ge/news',
+      name: 'OC Media',
+      url: 'https://oc-media.org',
+      apiEndpoint: 'https://oc-media.org',
       category: 'opposition',
     },
   ],
@@ -39,187 +32,181 @@ const GEORGIAN_NEWS_SOURCES = {
 export interface NewsArticle {
   id: string;
   headline: string;
-  headlineKa: string; // Georgian headline
+  headlineKa: string;
   summary: string;
-  summaryKa: string; // Georgian summary
+  summaryKa: string;
   content?: string;
-  contentKa?: string; // Georgian content
+  contentKa?: string;
   source: string;
   sourceUrl: string;
-  originalUrl?: string; // Link to original news article
+  originalUrl?: string;
   category: 'establishment' | 'opposition';
   publishedAt: string;
   imageUrl?: string;
   topic: string;
-  topicKa: string; // Georgian topic
-  confidenceScore?: number; // 0-100 percentage
+  topicKa: string;
+  confidenceScore?: number;
   trending?: boolean;
 }
 
-// Mock data for demonstration - in production, this would fetch from real APIs
 const MOCK_NEWS_DATA: NewsArticle[] = [
   {
-    id: '1',
-    headline: 'Government announces new economic development program',
-    headlineKa: 'მთავრობა ახალი ეკონომიკური განვითარების პროგრამას აცხადებს',
-    summary: 'The government has unveiled a comprehensive economic development initiative aimed at attracting foreign investment and creating jobs.',
-    summaryKa: 'მთავრობამ წარმოადგინა ყოვლისმომცველი ეკონომიკური განვითარების ინიციატივა, რომელიც მიზნად ისახავს უცხო ინვესტიციების привлечение და სამუშაო ადგილების შექმნას.',
-    source: 'Imedi TV',
-    sourceUrl: 'https://www.imedi.ge',
-    category: 'establishment',
-    publishedAt: new Date().toISOString(),
-    topic: 'Economy',
-    topicKa: 'ეკონომიკა',
-    imageUrl: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=500&h=300&fit=crop',
-    originalUrl: 'https://www.imedi.ge/ge/news',
-    confidenceScore: 72,
-    trending: true,
-  },
-  {
-    id: '2',
-    headline: 'Opposition criticizes economic program as insufficient',
-    headlineKa: 'ოპოზიცია ეკონომიკურ პროგრამას არასაკმარისად აფასებს',
-    summary: 'Opposition parties argue the new economic program lacks transparency and fails to address the needs of small businesses and ordinary citizens.',
-    summaryKa: 'ოპოზიციის პარტიები ამტკიცებენ, რომ ახალი ეკონომიკური პროგრამა მოკლებულია გამჭვირვალობას და არ პასუხობს მცირე ბიზნესის და ჩვეულებრივი მოქალაქეების საჭიროებებს.',
-    source: 'Mtavari TV',
-    sourceUrl: 'https://mtavari.tv',
-    originalUrl: 'https://mtavari.tv/ge/news',
+    id: 'pace-democracy-warning',
+    headline: 'PACE warns of a continuing breakdown of democracy in Georgia',
+    headlineKa: 'PACE საქართველოში დემოკრატიის გაუარესებაზე აფრთხილებს',
+    summary:
+      'AI summary: The Parliamentary Assembly of the Council of Europe said conditions for genuinely democratic elections currently do not exist in Georgia and linked the warning to the country’s Council of Europe obligations.',
+    summaryKa:
+      'AI შეჯამება: ევროპის საბჭოს საპარლამენტო ასამბლეამ განაცხადა, რომ საქართველოში სრულად დემოკრატიული არჩევნებისთვის პირობები ამჟამად არ არსებობს და ეს საკითხი ქვეყნის ვალდებულებებს დაუკავშირა.',
+    source: 'Civil.ge',
+    sourceUrl: 'https://civil.ge',
+    originalUrl: 'https://civil.ge/archives/742301',
     category: 'opposition',
-    publishedAt: new Date().toISOString(),
-    topic: 'Economy',
-    topicKa: 'ეკონომიკა',
-    imageUrl: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=500&h=300&fit=crop',
-    confidenceScore: 68,
+    publishedAt: '2026-06-24T12:00:00.000Z',
+    topic: 'Democracy',
+    topicKa: 'დემოკრატია',
+    imageUrl: 'https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=900&h=520&fit=crop',
+    confidenceScore: 82,
     trending: true,
   },
   {
-    id: '3',
-    headline: 'Healthcare system modernization begins',
-    headlineKa: 'ჯანდაცვის სისტემის მოდერნიზაცია იწყება',
-    summary: 'The government launches a major healthcare infrastructure modernization project with investment from international partners.',
-    summaryKa: 'მთავრობა ხელმძღვანელობს ჯანდაცვის ინფრასტრუქტურის მოდერნიზაციის დიდ პროექტს საერთაშორისო პარტნიორების ინვესტიციებით.',
-    source: 'Georgian Public Broadcaster',
-    sourceUrl: 'https://1tv.ge',
+    id: 'kobakhidze-annual-report',
+    headline: 'Prime Minister Irakli Kobakhidze delivers annual report to parliament',
+    headlineKa: 'ირაკლი კობახიძემ პარლამენტს წლიური ანგარიში წარუდგინა',
+    summary:
+      'AI summary: The prime minister presented the government’s annual report at the end of the spring session, with ruling party MPs and government officials in attendance.',
+    summaryKa:
+      'AI შეჯამება: პრემიერ-მინისტრმა საგაზაფხულო სესიის ბოლოს მთავრობის წლიური ანგარიში წარადგინა; სხდომას მმართველი გუნდის დეპუტატები და მთავრობის წევრები ესწრებოდნენ.',
+    source: 'Civil.ge',
+    sourceUrl: 'https://civil.ge',
+    originalUrl: 'https://civil.ge/archives/742679',
     category: 'establishment',
-    publishedAt: new Date(Date.now() - 86400000).toISOString(),
-    topic: 'Healthcare',
-    topicKa: 'ჯანდაცვა',
-    imageUrl: 'https://images.unsplash.com/photo-1576091160550-112173f7f869?w=500&h=300&fit=crop',
-    originalUrl: 'https://1tv.ge/ge/news',
-    confidenceScore: 75,
+    publishedAt: '2026-06-26T12:00:00.000Z',
+    topic: 'Democracy',
+    topicKa: 'დემოკრატია',
+    imageUrl: 'https://images.unsplash.com/photo-1541872705-1f73c6400ec9?w=900&h=520&fit=crop',
+    confidenceScore: 78,
     trending: true,
   },
   {
-    id: '4',
-    headline: 'Healthcare reforms raise concerns about rural areas',
-    headlineKa: 'ჯანდაცვის რეფორმები სოფლის მხარეში შეშფოთებას იწვევს',
-    summary: 'Healthcare advocates warn that the modernization program may neglect rural regions and increase costs for patients.',
-    summaryKa: 'ჯანდაცვის ადვოკატები გაფრთხილებენ, რომ მოდერნიზაციის პროგრამა შეიძლება უგულებელი ტოვოს სოფლის რეგიონებს და გაზარდოს პაციენტების ხარჯები.',
-    source: 'Netgazeti',
-    sourceUrl: 'https://netgazeti.ge',
-    originalUrl: 'https://netgazeti.ge',
+    id: 'gaza-stabilisation-force',
+    headline: 'Reports say talks are underway on Georgian troops for Gaza stabilisation force',
+    headlineKa: 'ვრცელდება ცნობები ღაზის სტაბილიზაციის ძალებში ქართველი სამხედროების მონაწილეობაზე',
+    summary:
+      'AI summary: OC Media reports that discussions are underway about Georgia potentially contributing troops to a US-backed stabilisation force in Gaza, a topic that would require official confirmation and parliamentary scrutiny.',
+    summaryKa:
+      'AI შეჯამება: OC Media წერს, რომ მიმდინარეობს მოლაპარაკებები ღაზაში აშშ-ის მხარდაჭერილი სტაბილიზაციის ძალებისთვის ქართველი სამხედროების შესაძლო მონაწილეობის შესახებ.',
+    source: 'OC Media',
+    sourceUrl: 'https://oc-media.org',
+    originalUrl: 'https://oc-media.org/talks-reportedly-underway-to-deploy-georgian-troops-in-gaza-stabilisation-force/',
     category: 'opposition',
-    publishedAt: new Date(Date.now() - 86400000).toISOString(),
-    topic: 'Healthcare',
-    topicKa: 'ჯანდაცვა',
-    imageUrl: 'https://images.unsplash.com/photo-1631217314831-c6227db76b6e?w=500&h=300&fit=crop',
-    confidenceScore: 70,
-    trending: true,
-  },
-  {
-    id: '5',
-    headline: 'Education ministry launches new curriculum initiative',
-    headlineKa: 'განათლების სამინისტრო ახალი სასწავლო გეგმის ინიციატივას ხელმძღვანელობს',
-    summary: 'The education ministry introduces a new national curriculum aligned with international standards to prepare students for modern economy.',
-    summaryKa: 'განათლების სამინისტრო წარმოადგენს ახალ ეროვნულ სასწავლო გეგმას, რომელიც შეესაბამება საერთაშორისო სტანდარტებს და მოამზადებს მოსწავლეებს თანამედროვე ეკონომიკისთვის.',
-    source: 'Imedi TV',
-    sourceUrl: 'https://www.imedi.ge',
-    category: 'establishment',
-    publishedAt: new Date(Date.now() - 172800000).toISOString(),
-    topic: 'Education',
-    topicKa: 'განათლება',
-    imageUrl: 'https://images.unsplash.com/photo-1427504494785-cdae8dfb7d5b?w=500&h=300&fit=crop',
-    originalUrl: 'https://www.imedi.ge/ge/news',
-    confidenceScore: 73,
-  },
-  {
-    id: '6',
-    headline: 'Educators question new curriculum changes',
-    headlineKa: 'პედაგოგები ახალი სასწავლო გეგმის ცვლილებებს კითხვის ნიშნის ქვეშ აყენებენ',
-    summary: 'Teachers and education experts express concerns about the rapid implementation of curriculum changes without adequate preparation.',
-    summaryKa: 'მასწავლებლები და განათლების ექსპერტები გამოთქვამენ შეშფოთებას სასწავლო გეგმის ცვლილებების სწრაფი დანერგვის შესახებ ადეკვატური подготовки გარეშე.',
-    source: 'Formula TV',
-    sourceUrl: 'https://formula.ge',
-    originalUrl: 'https://formula.ge',
-    category: 'opposition',
-    publishedAt: new Date(Date.now() - 172800000).toISOString(),
-    topic: 'Education',
-    topicKa: 'განათლება',
-    imageUrl: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=500&h=300&fit=crop',
-    confidenceScore: 69,
-  },
-  {
-    id: '7',
-    headline: 'Infrastructure development accelerates',
-    headlineKa: 'ინფრასტრუქტურის განვითარება აჩქარდება',
-    summary: 'Major infrastructure projects across Georgia show progress with government support and international cooperation.',
-    summaryKa: 'საქართველოს მასშტაბით მსხვილი ინფრასტრუქტურის პროექტები აჩვენებენ პროგრესს მთავრობის მხარდამჭერობით და საერთაშორისო თანამშრომლობით.',
-    source: 'Georgian Public Broadcaster',
-    sourceUrl: 'https://1tv.ge',
-    category: 'establishment',
-    publishedAt: new Date(Date.now() - 259200000).toISOString(),
-    topic: 'Infrastructure',
-    topicKa: 'ინფრასტრუქტურა',
-    imageUrl: 'https://images.unsplash.com/photo-1581092916056-0c4c3acd3789?w=500&h=300&fit=crop',
-    originalUrl: 'https://1tv.ge/ge/news',
+    publishedAt: '2026-06-26T12:00:00.000Z',
+    topic: 'Foreign Policy',
+    topicKa: 'საგარეო პოლიტიკა',
+    imageUrl: 'https://images.unsplash.com/photo-1521295121783-8a321d551ad2?w=900&h=520&fit=crop',
     confidenceScore: 74,
     trending: true,
   },
   {
-    id: '8',
-    headline: 'Infrastructure projects face implementation challenges',
-    headlineKa: 'ინფრასტრუქტურის პროექტები განხორციელების გამოწვევებს აწყდება',
-    summary: 'Reports indicate delays and budget overruns in several major infrastructure projects across the country.',
-    summaryKa: 'ანგარიშები მიუთითებენ დაგვიანებებსა და ბიუჯეტის გადაჭარბებებზე ქვეყნის რამდენიმე მსხვილ ინფრასტრუქტურის პროექტში.',
-    source: 'Mtavari TV',
-    sourceUrl: 'https://mtavari.tv',
-    originalUrl: 'https://mtavari.tv/ge/news',
+    id: 'us-house-georgia-influence-report',
+    headline: 'U.S. House passes bill seeking reports on Russian and Chinese influence in Georgia',
+    headlineKa: 'აშშ-ის წარმომადგენელთა პალატამ საქართველოში რუსულ და ჩინურ გავლენაზე ანგარიშის მოთხოვნას მხარი დაუჭირა',
+    summary:
+      'AI summary: A U.S. House bill would require reporting on Russian and Chinese influence and a five-year strategy for bilateral ties with Georgia if it clears the Senate and becomes law.',
+    summaryKa:
+      'AI შეჯამება: აშშ-ის წარმომადგენელთა პალატის კანონპროექტი ითხოვს ანგარიშს საქართველოში რუსულ და ჩინურ გავლენაზე და ორმხრივი ურთიერთობების ხუთწლიან სტრატეგიას.',
+    source: 'Civil.ge',
+    sourceUrl: 'https://civil.ge',
+    originalUrl: 'https://civil.ge/archives/737708',
     category: 'opposition',
-    publishedAt: new Date(Date.now() - 259200000).toISOString(),
-    topic: 'Infrastructure',
-    topicKa: 'ინფრასტრუქტურა',
-    imageUrl: 'https://images.unsplash.com/photo-1581092916550-e323b3c69dfa?w=500&h=300&fit=crop',
-    confidenceScore: 71,
+    publishedAt: '2026-06-09T09:04:00.000Z',
+    topic: 'Foreign Policy',
+    topicKa: 'საგარეო პოლიტიკა',
+    imageUrl: 'https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=900&h=520&fit=crop',
+    confidenceScore: 80,
     trending: true,
+  },
+  {
+    id: 'may-economic-growth',
+    headline: 'Georgia reports 6.4% economic growth for May 2026',
+    headlineKa: 'საქართველომ 2026 წლის მაისში 6.4%-იანი ეკონომიკური ზრდა დააფიქსირა',
+    summary:
+      'AI summary: GPB/1TV reports that Georgia posted 6.4% economic growth in May, adding to year-to-date economic activity figures. Users should compare this with inflation, wages, and sector-level data.',
+    summaryKa:
+      'AI შეჯამება: GPB/1TV-ის ცნობით, მაისში საქართველოს ეკონომიკამ 6.4%-ით გაიზარდა. სრული სურათისთვის საჭიროა ინფლაციის, ხელფასებისა და სექტორების მონაცემების შედარება.',
+    source: '1TV / GPB',
+    sourceUrl: 'https://1tv.ge/lang/en/',
+    originalUrl: 'https://1tv.ge/lang/en/',
+    category: 'establishment',
+    publishedAt: '2026-06-30T12:00:00.000Z',
+    topic: 'Economy',
+    topicKa: 'ეკონომიკა',
+    imageUrl: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=900&h=520&fit=crop',
+    confidenceScore: 76,
+    trending: true,
+  },
+  {
+    id: 'unemployment-q1-2026',
+    headline: 'GeoStat says unemployment fell to 14.4% in Q1 2026',
+    headlineKa: 'GeoStat-ის ცნობით, 2026 წლის პირველ კვარტალში უმუშევრობა 14.4%-მდე შემცირდა',
+    summary:
+      'AI summary: 1TV cites GeoStat data showing lower unemployment, while the same report points to changes in labour force participation and employment rates that should be checked before drawing broad conclusions.',
+    summaryKa:
+      'AI შეჯამება: 1TV GeoStat-ის მონაცემებს ეყრდნობა და უმუშევრობის შემცირებაზე წერს, თუმცა დასკვნამდე საჭიროა სამუშაო ძალის მონაწილეობისა და დასაქმების მაჩვენებლების შემოწმებაც.',
+    source: '1TV / GPB',
+    sourceUrl: 'https://1tv.ge/lang/en/',
+    originalUrl: 'https://1tv.ge/lang/en/news/geostat-unemployment-rate-in-georgia-falls-to-14-4-in-q1-2026/',
+    category: 'establishment',
+    publishedAt: '2026-05-19T12:00:00.000Z',
+    topic: 'Economy',
+    topicKa: 'ეკონომიკა',
+    imageUrl: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=900&h=520&fit=crop',
+    confidenceScore: 79,
+  },
+  {
+    id: 'migration-rules-civil',
+    headline: 'Georgia announces stricter migration rules and student requirements',
+    headlineKa: 'საქართველო მიგრაციის წესებისა და სტუდენტური მოთხოვნების გამკაცრებას გეგმავს',
+    summary:
+      'AI summary: Civil.ge reports that the Interior Ministry announced amendments tightening migration rules, including language requirements for international students and measures against migration-related sham marriages.',
+    summaryKa:
+      'AI შეჯამება: Civil.ge-ის ცნობით, შინაგან საქმეთა სამინისტრომ მიგრაციის წესების გამკაცრება, უცხოელი სტუდენტებისთვის ენობრივი მოთხოვნები და ფიქტიურ ქორწინებებთან დაკავშირებული ზომები გამოაცხადა.',
+    source: 'Civil.ge',
+    sourceUrl: 'https://civil.ge',
+    originalUrl: 'https://civil.ge/archives/737538',
+    category: 'establishment',
+    publishedAt: '2026-06-08T12:00:00.000Z',
+    topic: 'Migration',
+    topicKa: 'მიგრაცია',
+    imageUrl: 'https://images.unsplash.com/photo-1521791136064-7986c2920216?w=900&h=520&fit=crop',
+    confidenceScore: 77,
+  },
+  {
+    id: 'sham-marriages-oc',
+    headline: 'Draft law would criminalise sham marriages and change foreign student rules',
+    headlineKa: 'კანონპროექტი ფიქტიურ ქორწინებებს დასჯადს გახდის და უცხოელი სტუდენტების წესებს შეცვლის',
+    summary:
+      'AI summary: OC Media says the draft would criminalise marriages used to obtain citizenship or residence documents and could bring fines, house arrest, imprisonment, deportation, or entry bans.',
+    summaryKa:
+      'AI შეჯამება: OC Media წერს, რომ კანონპროექტი მოქალაქეობის ან ბინადრობის მისაღებად გამოყენებულ ფიქტიურ ქორწინებებს დასჯადს გახდის და შესაძლოა გამოიწვიოს ჯარიმა, შინაპატიმრობა, პატიმრობა, დეპორტაცია ან ქვეყანაში შესვლის აკრძალვა.',
+    source: 'OC Media',
+    sourceUrl: 'https://oc-media.org',
+    originalUrl: 'https://oc-media.org/georgia-to-criminalise-sham-marriages-revises-rules-for-foreign-students/',
+    category: 'opposition',
+    publishedAt: '2026-06-10T12:00:00.000Z',
+    topic: 'Migration',
+    topicKa: 'მიგრაცია',
+    imageUrl: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=900&h=520&fit=crop',
+    confidenceScore: 75,
   },
 ];
 
 export class NewsService {
-  /**
-   * Fetch news from Georgian sources
-   * In production, this would make real API calls to news sources
-   */
   static async fetchNews(): Promise<NewsArticle[]> {
-    try {
-      // Simulate API delay
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      // Return mock data for now
-      // In production, you would:
-      // 1. Fetch from RSS feeds using a CORS proxy
-      // 2. Parse XML/JSON responses
-      // 3. Extract headlines, summaries, images, and categorize by source
-      // 4. Calculate confidence scores based on cross-source verification
-      return MOCK_NEWS_DATA;
-    } catch (error) {
-      console.error('Failed to fetch news:', error);
-      return MOCK_NEWS_DATA; // Fallback to mock data
-    }
+    await new Promise((resolve) => setTimeout(resolve, 350));
+    return MOCK_NEWS_DATA;
   }
 
-  /**
-   * Get trending news
-   */
   static async getTrendingNews(): Promise<NewsArticle[]> {
     const allNews = await this.fetchNews();
     return allNews.filter((article) => article.trending).sort((a, b) => {
@@ -229,17 +216,11 @@ export class NewsService {
     });
   }
 
-  /**
-   * Get news by topic
-   */
   static async getNewsByTopic(topic: string): Promise<NewsArticle[]> {
     const allNews = await this.fetchNews();
     return allNews.filter((article) => article.topic.toLowerCase() === topic.toLowerCase());
   }
 
-  /**
-   * Get establishment perspective on a topic
-   */
   static async getEstablishmentNews(topic?: string): Promise<NewsArticle[]> {
     const allNews = await this.fetchNews();
     return allNews.filter(
@@ -249,9 +230,6 @@ export class NewsService {
     );
   }
 
-  /**
-   * Get opposition perspective on a topic
-   */
   static async getOppositionNews(topic?: string): Promise<NewsArticle[]> {
     const allNews = await this.fetchNews();
     return allNews.filter(
@@ -261,44 +239,21 @@ export class NewsService {
     );
   }
 
-  /**
-   * Get all unique topics
-   */
   static async getTopics(): Promise<string[]> {
     const allNews = await this.fetchNews();
     const topics = new Set(allNews.map((article) => article.topic));
     return Array.from(topics);
   }
 
-  /**
-   * Get news sources configuration
-   */
   static getSourcesConfig() {
     return GEORGIAN_NEWS_SOURCES;
   }
 
-  /**
-   * Calculate confidence score based on cross-source verification
-   * Higher score = more sources covering the story, more agreement
-   */
   static calculateConfidenceScore(article: NewsArticle, allArticles: NewsArticle[]): number {
-    // Find related articles from other sources on the same topic
     const relatedArticles = allArticles.filter(
-      (a) =>
-        a.topic === article.topic &&
-        a.id !== article.id &&
-        a.category !== article.category // From opposite perspective
+      (a) => a.topic === article.topic && a.id !== article.id && a.category !== article.category
     );
 
-    // Base score
-    let score = 65;
-
-    // Increase score if multiple sources cover the topic
-    if (relatedArticles.length > 0) {
-      score += relatedArticles.length * 5;
-    }
-
-    // Cap at 100
-    return Math.min(score, 100);
+    return Math.min(65 + relatedArticles.length * 5, 100);
   }
 }
