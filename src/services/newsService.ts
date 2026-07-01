@@ -45,7 +45,6 @@ export interface NewsArticle {
   imageUrl?: string;
   topic: string;
   topicKa: string;
-  confidenceScore?: number;
   trending?: boolean;
 }
 
@@ -66,7 +65,6 @@ const MOCK_NEWS_DATA: NewsArticle[] = [
     topic: 'Democracy',
     topicKa: 'დემოკრატია',
     imageUrl: 'https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=900&h=520&fit=crop',
-    confidenceScore: 82,
     trending: true,
   },
   {
@@ -85,7 +83,6 @@ const MOCK_NEWS_DATA: NewsArticle[] = [
     topic: 'Democracy',
     topicKa: 'დემოკრატია',
     imageUrl: 'https://images.unsplash.com/photo-1541872705-1f73c6400ec9?w=900&h=520&fit=crop',
-    confidenceScore: 78,
     trending: true,
   },
   {
@@ -104,7 +101,6 @@ const MOCK_NEWS_DATA: NewsArticle[] = [
     topic: 'Foreign Policy',
     topicKa: 'საგარეო პოლიტიკა',
     imageUrl: 'https://images.unsplash.com/photo-1521295121783-8a321d551ad2?w=900&h=520&fit=crop',
-    confidenceScore: 74,
     trending: true,
   },
   {
@@ -123,7 +119,6 @@ const MOCK_NEWS_DATA: NewsArticle[] = [
     topic: 'Foreign Policy',
     topicKa: 'საგარეო პოლიტიკა',
     imageUrl: 'https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=900&h=520&fit=crop',
-    confidenceScore: 80,
     trending: true,
   },
   {
@@ -142,7 +137,6 @@ const MOCK_NEWS_DATA: NewsArticle[] = [
     topic: 'Economy',
     topicKa: 'ეკონომიკა',
     imageUrl: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=900&h=520&fit=crop',
-    confidenceScore: 76,
     trending: true,
   },
   {
@@ -161,7 +155,6 @@ const MOCK_NEWS_DATA: NewsArticle[] = [
     topic: 'Economy',
     topicKa: 'ეკონომიკა',
     imageUrl: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=900&h=520&fit=crop',
-    confidenceScore: 79,
   },
   {
     id: 'migration-rules-civil',
@@ -179,7 +172,6 @@ const MOCK_NEWS_DATA: NewsArticle[] = [
     topic: 'Migration',
     topicKa: 'მიგრაცია',
     imageUrl: 'https://images.unsplash.com/photo-1521791136064-7986c2920216?w=900&h=520&fit=crop',
-    confidenceScore: 77,
   },
   {
     id: 'sham-marriages-oc',
@@ -197,7 +189,6 @@ const MOCK_NEWS_DATA: NewsArticle[] = [
     topic: 'Migration',
     topicKa: 'მიგრაცია',
     imageUrl: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=900&h=520&fit=crop',
-    confidenceScore: 75,
   },
 ];
 
@@ -247,13 +238,5 @@ export class NewsService {
 
   static getSourcesConfig() {
     return GEORGIAN_NEWS_SOURCES;
-  }
-
-  static calculateConfidenceScore(article: NewsArticle, allArticles: NewsArticle[]): number {
-    const relatedArticles = allArticles.filter(
-      (a) => a.topic === article.topic && a.id !== article.id && a.category !== article.category
-    );
-
-    return Math.min(65 + relatedArticles.length * 5, 100);
   }
 }
