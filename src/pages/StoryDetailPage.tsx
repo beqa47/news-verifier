@@ -33,20 +33,23 @@ export default function StoryDetailPage({ storyId, onBack }: StoryDetailPageProp
 
   const loadStory = async () => {
     setLoading(true);
+    setAiResult(null);
+    setAiError(null);
     try {
       const allNews = await NewsService.fetchNews();
       const selectedStory = allNews.find((s) => s.id === storyId);
 
       if (selectedStory) {
-        setStory(selectedStory);
-
         const related = allNews.filter(
           (s) =>
             s.topic === selectedStory.topic &&
             s.category !== selectedStory.category &&
             s.id !== selectedStory.id
         );
+
+        setStory(selectedStory);
         setRelatedStories(related);
+        void runAiVerification(selectedStory, related);
       }
     } catch (error) {
       console.error('Failed to load story:', error);
@@ -86,13 +89,16 @@ export default function StoryDetailPage({ storyId, onBack }: StoryDetailPageProp
     });
   };
 
-  const runAiVerification = async () => {
-    if (!story) return;
+  const runAiVerification = async (
+    targetStory: NewsArticle = story as NewsArticle,
+    targetRelatedStories: NewsArticle[] = relatedStories
+  ) => {
+    if (!targetStory) return;
 
     setAiLoading(true);
     setAiError(null);
     try {
-      const result = await AiVerificationService.verifyStory(story, relatedStories);
+      const result = await AiVerificationService.verifyStory(targetStory, targetRelatedStories);
       setAiResult(result);
     } catch (error) {
       setAiError(error instanceof Error ? error.message : t('aiUnavailable'));
@@ -123,6 +129,13 @@ export default function StoryDetailPage({ storyId, onBack }: StoryDetailPageProp
     );
   }
 
+  const headerConfidence = aiResult?.confidence;
+  const headerConfidenceText = headerConfidence === undefined
+    ? language === 'ka'
+      ? 'AI ამოწმებს...'
+      : 'AI checking...'
+    : `${headerConfidence}% ${t('confidenceScore')}`;
+
   return (
     <div className="story-detail-page">
       <button className="back-button" onClick={onBack}>
@@ -145,22 +158,28 @@ export default function StoryDetailPage({ storyId, onBack }: StoryDetailPageProp
 
         <h1 className="story-title">{getHeadline(story)}</h1>
 
-        {story.confidenceScore !== undefined && (
-          <div className="confidence-section">
-            <div className="confidence-bar">
-              <div
-                className="confidence-fill"
-                style={{
-                  width: `${story.confidenceScore}%`,
-                  backgroundColor: getConfidenceColor(story.confidenceScore),
-                }}
-              />
-            </div>
-            <span className="confidence-label" style={{ color: getConfidenceColor(story.confidenceScore) }}>
-              {story.confidenceScore}% {t('confidenceScore')}
-            </span>
+        <div className="confidence-section">
+          <div className="confidence-bar">
+            <div
+              className="confidence-fill"
+              style={{
+                width: headerConfidence === undefined ? '100%' : `${headerConfidence}%`,
+                backgroundColor:
+                  headerConfidence === undefined
+                    ? 'rgba(118, 118, 128, 0.28)'
+                    : getConfidenceColor(headerConfidence),
+              }}
+            />
           </div>
-        )}
+          <span
+            className="confidence-label"
+            style={{
+              color: headerConfidence === undefined ? '#8e8e93' : getConfidenceColor(headerConfidence),
+            }}
+          >
+            {headerConfidenceText}
+          </span>
+        </div>
       </div>
 
       <div className="tabs">
@@ -223,7 +242,7 @@ export default function StoryDetailPage({ storyId, onBack }: StoryDetailPageProp
                       : 'AI compares both perspectives and checks them against starter Georgian constitutional context.'}
                   </p>
                 </div>
-                <button className="ai-button" onClick={runAiVerification} disabled={aiLoading}>
+                <button className="ai-button" onClick={() => runAiVerification()} disabled={aiLoading}>
                   {aiLoading ? t('aiVerifying') : t('runAiVerification')}
                 </button>
               </div>
