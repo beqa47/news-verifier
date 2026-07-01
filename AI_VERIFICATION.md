@@ -1,19 +1,26 @@
 # AI Verification Setup
 
-The app now includes an AI-assisted verification path:
+The app includes an AI-assisted verification path:
 
 - Browser UI calls `src/services/aiVerificationService.ts`
 - The server endpoint `api/verify.js` calls OpenAI
 - The legal context starter set lives in `api/legalKnowledge.js`
+- Verification responses are cached server-side for 6 hours to reduce repeated token usage
 
 Configure these environment variables in Vercel or your local server environment:
 
 ```bash
 OPENAI_API_KEY=your_openai_api_key
-OPENAI_MODEL=gpt-5.5
+OPENAI_MODEL=gpt-5.4-mini
 ```
 
 Do not expose `OPENAI_API_KEY` in Vite frontend environment variables. The key must stay server-side.
+
+## Cost Control
+
+The default model is `gpt-5.4-mini` so the first version can stay cheaper and faster. The endpoint caches the same story/topic verification result for 6 hours, so repeated users checking the same article should reuse the result instead of calling the model every time.
+
+For more control in production, add persistent storage such as Vercel KV, Supabase, or a database table keyed by article URL and model.
 
 ## Legal Knowledge
 
