@@ -85,6 +85,7 @@ function App() {
       <footer className="footer">
         <p>Georgian News Verifier © 2024</p>
         <p>Comparing establishment and opposition perspectives</p>
+        <p>Build: AI confidence core v2</p>
       </footer>
     </div>
   );
