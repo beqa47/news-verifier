@@ -1,6 +1,7 @@
 import { selectLegalContext } from './legalKnowledge.js';
 
 const DEFAULT_MODEL = 'gpt-5.4-mini';
+const OUTPUT_LANGUAGE = 'ka-GE';
 const CACHE_TTL_MS = 6 * 60 * 60 * 1000;
 const verificationCache = globalThis.__verificationCache || new Map();
 globalThis.__verificationCache = verificationCache;
@@ -19,6 +20,7 @@ function normalizeStory(story) {
 function getCacheKey(model, primary, opposing) {
   return JSON.stringify({
     model,
+    outputLanguage: OUTPUT_LANGUAGE,
     primary: {
       headline: primary.headline,
       originalUrl: primary.originalUrl,
@@ -77,13 +79,13 @@ function parseJson(text) {
 
 function validateResult(result) {
   return {
-    verdict: String(result.verdict || 'needs_more_evidence').slice(0, 80),
+    verdict: String(result.verdict || 'მეტი მტკიცებულებაა საჭირო').slice(0, 80),
     confidence: Math.max(0, Math.min(100, Number(result.confidence) || 0)),
     summary: String(result.summary || '').slice(0, 1000),
     claims: Array.isArray(result.claims)
       ? result.claims.slice(0, 6).map((claim) => ({
           text: String(claim.text || '').slice(0, 500),
-          status: String(claim.status || 'unclear').slice(0, 80),
+          status: String(claim.status || 'გაურკვეველია').slice(0, 80),
           reasoning: String(claim.reasoning || '').slice(0, 700),
         }))
       : [],
@@ -133,16 +135,17 @@ export default async function handler(request, response) {
     }
 
     const prompt = {
+      outputLanguage: 'Georgian only. Use natural, clear Georgian for every text field.',
       primary,
       opposing,
       legalContext,
       outputSchema: {
-        verdict: 'supported | disputed | misleading | needs_more_evidence',
+        verdict: 'Georgian label such as მხარდაჭერილია | სადავოა | შეცდომაში შემყვანია | მეტი მტკიცებულებაა საჭირო',
         confidence: 'number from 0 to 100',
-        summary: 'short balanced explanation',
-        claims: [{ text: 'claim', status: 'supported | disputed | unclear', reasoning: 'why' }],
-        legalConsiderations: ['relevant Georgian legal or constitutional principle'],
-        questionsToVerify: ['specific follow-up evidence needed'],
+        summary: 'short balanced explanation in Georgian',
+        claims: [{ text: 'claim in Georgian', status: 'status in Georgian', reasoning: 'reasoning in Georgian' }],
+        legalConsiderations: ['relevant Georgian legal or constitutional principle in Georgian'],
+        questionsToVerify: ['specific follow-up evidence needed in Georgian'],
         sourcesUsed: [{ title: 'source title', url: 'source URL' }],
       },
     };
@@ -159,7 +162,7 @@ export default async function handler(request, response) {
           {
             role: 'system',
             content:
-              'You are an AI news verification assistant for Georgian public-interest reporting. Compare establishment and opposition coverage. Use the provided Georgian legal context only as context, not as legal advice. Do not invent facts, statutes, quotes, or source content. If evidence is insufficient, say so. Return only valid JSON matching the requested schema.',
+              'შენ ხარ ქართული საჯარო ინტერესის ჟურნალისტიკის AI გადამმოწმებელი. ყველა პასუხი უნდა იყოს სრულად ქართულ ენაზე. შეადარე ხელისუფლებასთან და ოპოზიციასთან ასოცირებული გაშუქებები. გამოიყენე მოწოდებული ქართული სამართლებრივი/კონსტიტუციური კონტექსტი მხოლოდ კონტექსტად და არა იურიდიულ რჩევად. არ გამოიგონო ფაქტები, კანონები, ციტატები ან წყაროების შინაარსი. თუ მტკიცებულება არასაკმარისია, ეს მკაფიოდ თქვი. დააბრუნე მხოლოდ ვალიდური JSON მოთხოვნილი სქემით. JSON-ის ყველა ტექსტური ველი, მათ შორის verdict, status, summary, reasoning, legalConsiderations და questionsToVerify, უნდა იყოს ქართულად.',
           },
           {
             role: 'user',
@@ -182,7 +185,7 @@ export default async function handler(request, response) {
       legalContext,
       cached: false,
       disclaimer:
-        'AI analysis can miss context and is not legal advice. Verify important claims with primary sources and qualified legal review.',
+        'AI ანალიზი შეიძლება არასრულ კონტექსტს დაეყრდნოს და არ წარმოადგენს იურიდიულ რჩევას. მნიშვნელოვანი მტკიცებები გადაამოწმეთ პირველწყაროებით და კვალიფიციური სამართლებრივი შეფასებით.',
     };
 
     setCachedResult(cacheKey, result);
