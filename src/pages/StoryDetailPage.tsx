@@ -193,10 +193,6 @@ export default function StoryDetailPage({ storyId, onBack }: StoryDetailPageProp
                       <span className="ai-label">{t('confidenceScore')}</span>
                       <strong>{aiResult.confidence}%</strong>
                     </div>
-                    <div>
-                      <span className="ai-label">{t('model')}</span>
-                      <strong>{aiResult.model}</strong>
-                    </div>
                   </div>
 
                   <p className="ai-summary">{aiResult.summary}</p>
