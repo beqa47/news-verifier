@@ -15,7 +15,7 @@ interface StoryDetailPageProps {
 export default function StoryDetailPage({ storyId, onBack }: StoryDetailPageProps) {
   const [story, setStory] = useState<NewsArticle | null>(null);
   const [relatedStories, setRelatedStories] = useState<NewsArticle[]>([]);
-  const [activeTab, setActiveTab] = useState<'comparison' | 'analysis'>('comparison');
+  const [activeTab, setActiveTab] = useState<'comparison' | 'analysis'>('analysis');
   const [loading, setLoading] = useState(true);
   const [language, setLanguage] = useState<Language>(() => TranslationService.getLanguage());
   const [aiResult, setAiResult] = useState<AiVerificationResult | null>(null);
@@ -23,6 +23,7 @@ export default function StoryDetailPage({ storyId, onBack }: StoryDetailPageProp
   const [aiError, setAiError] = useState<string | null>(null);
 
   useEffect(() => {
+    setActiveTab('analysis');
     loadStory();
     const handleLanguageChange = () => {
       setLanguage(TranslationService.getLanguage());
@@ -148,52 +149,20 @@ export default function StoryDetailPage({ storyId, onBack }: StoryDetailPageProp
 
       <div className="tabs">
         <button
-          className={`tab-button ${activeTab === 'comparison' ? 'active' : ''}`}
-          onClick={() => setActiveTab('comparison')}
-        >
-          {t('perspectives')}
-        </button>
-        <button
           className={`tab-button ${activeTab === 'analysis' ? 'active' : ''}`}
           onClick={() => setActiveTab('analysis')}
         >
           {t('analysis')}
         </button>
+        <button
+          className={`tab-button ${activeTab === 'comparison' ? 'active' : ''}`}
+          onClick={() => setActiveTab('comparison')}
+        >
+          {t('perspectives')}
+        </button>
       </div>
 
       <div className="tab-content">
-        {activeTab === 'comparison' && (
-          <div className="comparison-view">
-            <div className="perspective-card primary">
-              <h3>{getSourceLabel(story.category)}</h3>
-              <p className="source-name">{story.source}</p>
-              <p className="summary">{getSummary(story)}</p>
-              {story.originalUrl && (
-                <a href={story.originalUrl} target="_blank" rel="noopener noreferrer" className="source-button">
-                  {t('viewOnSource')} →
-                </a>
-              )}
-            </div>
-
-            {relatedStories.length > 0 ? (
-              <div className="perspective-card opposite">
-                <h3>{getSourceLabel(relatedStories[0].category)}</h3>
-                <p className="source-name">{relatedStories[0].source}</p>
-                <p className="summary">{getSummary(relatedStories[0])}</p>
-                {relatedStories[0].originalUrl && (
-                  <a href={relatedStories[0].originalUrl} target="_blank" rel="noopener noreferrer" className="source-button">
-                    {t('viewOnSource')} →
-                  </a>
-                )}
-              </div>
-            ) : (
-              <div className="perspective-card opposite empty">
-                <p>{t('noOpposing')}</p>
-              </div>
-            )}
-          </div>
-        )}
-
         {activeTab === 'analysis' && (
           <div className="analysis-view">
             <div className="analysis-section ai-verification-section">
@@ -316,6 +285,38 @@ export default function StoryDetailPage({ storyId, onBack }: StoryDetailPageProp
                     : 'No opposing perspective is available for this topic yet.'}
               </p>
             </div>
+          </div>
+        )}
+
+        {activeTab === 'comparison' && (
+          <div className="comparison-view">
+            <div className="perspective-card primary">
+              <h3>{getSourceLabel(story.category)}</h3>
+              <p className="source-name">{story.source}</p>
+              <p className="summary">{getSummary(story)}</p>
+              {story.originalUrl && (
+                <a href={story.originalUrl} target="_blank" rel="noopener noreferrer" className="source-button">
+                  {t('viewOnSource')} →
+                </a>
+              )}
+            </div>
+
+            {relatedStories.length > 0 ? (
+              <div className="perspective-card opposite">
+                <h3>{getSourceLabel(relatedStories[0].category)}</h3>
+                <p className="source-name">{relatedStories[0].source}</p>
+                <p className="summary">{getSummary(relatedStories[0])}</p>
+                {relatedStories[0].originalUrl && (
+                  <a href={relatedStories[0].originalUrl} target="_blank" rel="noopener noreferrer" className="source-button">
+                    {t('viewOnSource')} →
+                  </a>
+                )}
+              </div>
+            ) : (
+              <div className="perspective-card opposite empty">
+                <p>{t('noOpposing')}</p>
+              </div>
+            )}
           </div>
         )}
       </div>
