@@ -260,16 +260,6 @@ export default function StoryDetailPage({ storyId, onBack }: StoryDetailPageProp
             </div>
 
             <div className="analysis-section">
-              <h3>{t('howToVerify')}</h3>
-              <ul>
-                <li>{language === 'ka' ? 'შეადაროთ სხვადსხვა წყაროებიდან გამოქვეყნებული ახალი ამბები' : 'Compare news from multiple sources'}</li>
-                <li>{language === 'ka' ? 'მოძებნეთ ფაქტობრივი მტკიცებულება და წყაროები' : 'Look for factual evidence and sources'}</li>
-                <li>{language === 'ka' ? 'გაითვალისწინეთ, თუ რა შეიძლება იყოს ჟურნალისტის მიკერძოება' : 'Consider potential journalist bias'}</li>
-                <li>{language === 'ka' ? 'გადამოწმეთ ინფორმაცია დამოუკიდებელი წყაროებით' : 'Verify information with independent sources'}</li>
-              </ul>
-            </div>
-
-            <div className="analysis-section">
               <h3>{t('comparisonInsight')}</h3>
               <p>
                 {relatedStories.length > 0
