@@ -75,6 +75,10 @@ export default function StoryDetailPage({ storyId, onBack }: StoryDetailPageProp
     return category === 'establishment' ? t('establishmentView') : t('oppositionView');
   };
 
+  const getArticleUrl = (article: NewsArticle) => {
+    return article.originalUrl || article.sourceUrl;
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString(language === 'ka' ? 'ka-GE' : 'en-US', {
@@ -137,11 +141,9 @@ export default function StoryDetailPage({ storyId, onBack }: StoryDetailPageProp
           <span className="source-label">{getSourceLabel(story.category)}</span>
           <span className="source-name">{story.source}</span>
           <span className="date">{formatDate(story.publishedAt)}</span>
-          {story.originalUrl && (
-            <a href={story.originalUrl} target="_blank" rel="noopener noreferrer" className="original-link">
-              {t('readOriginal')}
-            </a>
-          )}
+          <a href={getArticleUrl(story)} target="_blank" rel="noopener noreferrer" className="original-link">
+            {t('readOriginal')}
+          </a>
         </div>
 
         <h1 className="story-title">{getHeadline(story)}</h1>
@@ -280,24 +282,27 @@ export default function StoryDetailPage({ storyId, onBack }: StoryDetailPageProp
               <h3>{getSourceLabel(story.category)}</h3>
               <p className="source-name">{story.source}</p>
               <p className="summary">{getSummary(story)}</p>
-              {story.originalUrl && (
-                <a href={story.originalUrl} target="_blank" rel="noopener noreferrer" className="source-button">
-                  {t('viewOnSource')} →
-                </a>
-              )}
+              <a href={getArticleUrl(story)} target="_blank" rel="noopener noreferrer" className="source-button">
+                {t('viewOnSource')} →
+              </a>
             </div>
 
             {relatedStories.length > 0 ? (
-              <div className="perspective-card opposite">
-                <h3>{getSourceLabel(relatedStories[0].category)}</h3>
-                <p className="source-name">{relatedStories[0].source}</p>
-                <p className="summary">{getSummary(relatedStories[0])}</p>
-                {relatedStories[0].originalUrl && (
-                  <a href={relatedStories[0].originalUrl} target="_blank" rel="noopener noreferrer" className="source-button">
+              relatedStories.map((relatedStory) => (
+                <div className="perspective-card opposite" key={relatedStory.id}>
+                  <h3>{getSourceLabel(relatedStory.category)}</h3>
+                  <p className="source-name">{relatedStory.source}</p>
+                  <p className="summary">{getSummary(relatedStory)}</p>
+                  <a
+                    href={getArticleUrl(relatedStory)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="source-button"
+                  >
                     {t('viewOnSource')} →
                   </a>
-                )}
-              </div>
+                </div>
+              ))
             ) : (
               <div className="perspective-card opposite empty">
                 <p>{t('noOpposing')}</p>
